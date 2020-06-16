@@ -3275,6 +3275,21 @@ void gcode_M701()
 #endif //FSENSOR_QUALITY
 	}
 }
+
+class SerialPortHelper
+{
+public:
+    SerialPortHelper(uint8_t serialPort) : m_selectedSerialPort(selectedSerialPort)
+    {
+        selectedSerialPort = serialPort;
+    }
+    ~SerialPortHelper()
+    {
+        selectedSerialPort = m_selectedSerialPort;
+    }
+private:
+    uint8_t m_selectedSerialPort;
+};
 /**
  * @brief Get serial number from 32U2 processor
  *
@@ -3290,37 +3305,37 @@ void gcode_M701()
  */
 static void gcode_PRUSA_SN()
 {
-    if (farm_mode) {
-        selectedSerialPort = 0;
+    {
+        SerialPortHelper(0);
         putchar(';');
         putchar('S');
-        int numbersRead = 0;
-        ShortTimer timeout;
-        timeout.start();
-
-        while (numbersRead < 19) {
-            while (MSerial.available() > 0) {
-                uint8_t serial_char = MSerial.read();
-                selectedSerialPort = 1;
-                putchar(serial_char);
-                numbersRead++;
-                selectedSerialPort = 0;
-            }
-            if (timeout.expired(100u)) break;
-        }
-        selectedSerialPort = 1;
-        putchar('\n');
-#if 0
-        for (int b = 0; b < 3; b++) {
-            _tone(BEEPER, 110);
-            _delay(50);
-            _noTone(BEEPER);
-            _delay(50);
-        }
-#endif
-    } else {
-        puts_P(_N("Not in farm mode."));
     }
+    int numbersRead = 0;
+    ShortTimer timeout;
+    timeout.start();
+
+    while (numbersRead < 19) {
+        while (MSerial.available() > 0) {
+            uint8_t serial_char = '?';
+            {
+                SerialPortHelper(0);
+                serial_char = MSerial.read();
+            }
+            putchar(serial_char);
+            numbersRead++;
+        }
+        if (timeout.expired(100u)) break;
+    }
+    putchar('\n');
+#if 0
+    for (int b = 0; b < 3; b++) {
+        _tone(BEEPER, 110);
+        _delay(50);
+        _noTone(BEEPER);
+        _delay(50);
+    }
+#endif
+
 }
 //! Detection of faulty RAMBo 1.1b boards equipped with bigger capacitors
 //! at the TACH_1 pin, which causes bad detection of print fan speed.
