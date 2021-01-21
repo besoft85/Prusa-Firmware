@@ -2249,99 +2249,10 @@ void homeaxis(int axis, uint8_t cnt)
 	bool endstops_enabled  = enable_endstops(true); //RP: endstops should be allways enabled durring homing
 #define HOMEAXIS_DO(LETTER) \
 ((LETTER##_MIN_PIN > -1 && LETTER##_HOME_DIR==-1) || (LETTER##_MAX_PIN > -1 && LETTER##_HOME_DIR==1))
-    if ((axis==X_AXIS)?HOMEAXIS_DO(X):(axis==Y_AXIS)?HOMEAXIS_DO(Y):0)
+    if ((axis==X_AXIS) || (axis==Y_AXIS))
 	{
-        int axis_home_dir = home_dir(axis);
-        feedrate = homing_feedrate[axis];
-
-#ifdef TMC2130
-    	tmc2130_home_enter(X_AXIS_MASK << axis);
-#endif //TMC2130
-
-
-        // Move away a bit, so that the print head does not touch the end position,
-        // and the following movement to endstop has a chance to achieve the required velocity
-        // for the stall guard to work.
-        current_position[axis] = 0;
-        plan_set_position_curposXYZE();
-		set_destination_to_current();
-//        destination[axis] = 11.f;
-        destination[axis] = -3.f * axis_home_dir;
-        plan_buffer_line_destinationXYZE(feedrate/60);
-        st_synchronize();
-        // Move away from the possible collision with opposite endstop with the collision detection disabled.
-        endstops_hit_on_purpose();
-        enable_endstops(false);
-        current_position[axis] = 0;
-        plan_set_position_curposXYZE();
-        destination[axis] = 1. * axis_home_dir;
-        plan_buffer_line_destinationXYZE(feedrate/60);
-        st_synchronize();
-        // Now continue to move up to the left end stop with the collision detection enabled.
-        enable_endstops(true);
-        destination[axis] = 1.1 * axis_home_dir * max_length(axis);
-        plan_buffer_line_destinationXYZE(feedrate/60);
-        st_synchronize();
-		for (uint8_t i = 0; i < cnt; i++)
-		{
-			// Move away from the collision to a known distance from the left end stop with the collision detection disabled.
-			endstops_hit_on_purpose();
-			enable_endstops(false);
-			current_position[axis] = 0;
-			plan_set_position_curposXYZE();
-			destination[axis] = -10.f * axis_home_dir;
-			plan_buffer_line_destinationXYZE(feedrate/60);
-			st_synchronize();
-			endstops_hit_on_purpose();
-			// Now move left up to the collision, this time with a repeatable velocity.
-			enable_endstops(true);
-			destination[axis] = 11.f * axis_home_dir;
-#ifdef TMC2130
-			feedrate = homing_feedrate[axis];
-#else //TMC2130
-			feedrate = homing_feedrate[axis] / 2;
-#endif //TMC2130
-			plan_buffer_line_destinationXYZE(feedrate/60);
-			st_synchronize();
-#ifdef TMC2130
-			uint16_t mscnt = tmc2130_rd_MSCNT(axis);
-			if (pstep) pstep[i] = mscnt >> 4;
-			printf_P(PSTR("%3d step=%2d mscnt=%4d\n"), i, mscnt >> 4, mscnt);
-#endif //TMC2130
-		}
-		endstops_hit_on_purpose();
-		enable_endstops(false);
-
-#ifdef TMC2130
-		uint8_t orig = tmc2130_home_origin[axis];
-		uint8_t back = tmc2130_home_bsteps[axis];
-		if (tmc2130_home_enabled && (orig <= 63))
-		{
-			tmc2130_goto_step(axis, orig, 2, 1000, tmc2130_get_res(axis));
-			if (back > 0)
-				tmc2130_do_steps(axis, back, -axis_home_dir, 1000);
-		}
-		else
-			tmc2130_do_steps(axis, 8, -axis_home_dir, 1000);
-		tmc2130_home_exit();
-#endif //TMC2130
-
         axis_is_at_home(axis);
         axis_known_position[axis] = true;
-        // Move from minimum
-#ifdef TMC2130
-        float dist = - axis_home_dir * 0.01f * tmc2130_home_fsteps[axis];
-#else //TMC2130
-        float dist = - axis_home_dir * 0.01f * 64;
-#endif //TMC2130
-        current_position[axis] -= dist;
-        plan_set_position_curposXYZE();
-        current_position[axis] += dist;
-        destination[axis] = current_position[axis];
-        plan_buffer_line_destinationXYZE(0.5f*feedrate/60);
-        st_synchronize();
-
-   		feedrate = 0.0;
     }
     else if ((axis==Z_AXIS)?HOMEAXIS_DO(Z):0)
 	{
