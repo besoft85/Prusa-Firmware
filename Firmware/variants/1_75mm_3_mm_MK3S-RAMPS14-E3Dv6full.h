@@ -1,5 +1,5 @@
 //*******************************//
-// Suitable for Prusa MK2S clone //
+// Suitable for Prusa MK3S clone //
 //*******************************//
 
 #ifndef CONFIGURATION_PRUSA_H
@@ -22,9 +22,9 @@
 #define PRINTER_MMU_NAME PRINTER_MK3S_MMU2_NAME	// dummy item (due to successfully compilation / building only)
 
 #ifdef FILAMENT_3MM		
-	#define FILAMENT_SIZE "2_85mm_MK2S"
+	#define FILAMENT_SIZE "2_85mm_MK3S"
 #else
-	#define FILAMENT_SIZE "1_75mm_MK2S"
+	#define FILAMENT_SIZE "1_75mm_MK3S"
 #endif
 #define NOZZLE_TYPE "E3Dv6full"
 
@@ -76,7 +76,7 @@
 #define DEVELOPER
 
 // Printer name
-#define CUSTOM_MENDEL_NAME "Prusa i3 MK3Ss - By BeSoft"
+#define CUSTOM_MENDEL_NAME "Prusa i3 MK3S - By BeSoft"
 
 // Electronics
 #define MOTHERBOARD BOARD_RAMPS_14_EFB //BOARD_EINSY_1_0a
