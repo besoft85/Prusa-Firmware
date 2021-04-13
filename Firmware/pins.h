@@ -21,6 +21,12 @@
 #include "pins_Einsy_1_0.h"
 #endif //MOTHERBOARD == BOARD_EINSY_1_0a
 
+/*RAMPS*/
+#if MOTHERBOARD == BOARD_RAMPS_14_EFB //33 - RAMPS 1.3 / 1.4 (Power outputs: Extruder, Fan, Bed)
+#include "pins_Ramps.h"
+#endif //MOTHERBOARD == BOARD_RAMPS_14_EFB
+/*RAMPS*/
+
 #ifndef KNOWN_BOARD
 #error Unknown MOTHERBOARD value in configuration.h
 #endif

@@ -202,6 +202,8 @@ int bowden_length[4] = {385, 385, 385, 385};
 bool is_usb_printing = false;
 bool homing_flag = false;
 
+bool temp_cal_active = false;  
+
 unsigned long kicktime = _millis()+100000;
 
 unsigned int  usb_printing_counter;
@@ -757,7 +759,18 @@ static void factory_reset(char level)
 
 			// Erase EEPROM
 			for (int i = 0; i < 4096; i++) {
-				eeprom_update_byte((uint8_t*)i, 0xFF);
+                /*RAMPS*/
+                if (level == 4) {
+                    // erase everything except data on filament used and total printing time
+                    if (i < EEPROM_TOTALTIME || i >= EEPROM_BABYSTEP_Z0)
+                    {
+                        // | 0x0FF5h 4085 | uint16 | EEPROM_BABYSTEP_Z0
+                        // | 0x0FF1h 4081 | uint32 | EEPROM_FILAMENTUSED
+                        // | 0x0FEDh 4077 | uint32 | EEPROM_TOTALTIME
+                        eeprom_update_byte((uint8_t*)i, 0xFF);
+                    }
+                }
+                /*RAMPS*/
 
 				if (i % 41 == 0) {
 					er_progress++;
@@ -851,10 +864,12 @@ void show_fw_version_warnings() {
 	case(FW_VERSION_DEBUG):
     lcd_update_enable(false);
     lcd_clear();
+/*RAMPS*/
+// deleted double/tripple exclamation marks! (arduino compile error)
   #if FW_DEV_VERSION == FW_VERSION_DEVEL
-    lcd_puts_at_P(0, 0, PSTR("Development build !!"));
+    lcd_puts_at_P(0, 0, PSTR("Development build !"));
   #else
-    lcd_puts_at_P(0, 0, PSTR("Debbugging build !!!"));
+    lcd_puts_at_P(0, 0, PSTR("Debbugging build !"));
   #endif
     lcd_puts_at_P(0, 1, PSTR("May destroy printer!"));
     lcd_puts_at_P(0, 2, PSTR("ver ")); lcd_puts_P(PSTR(FW_VERSION_FULL));
@@ -1010,11 +1025,19 @@ static void w25x20cl_err_msg()
 // are initialized by the main() routine provided by the Arduino framework.
 void setup()
 {
-	mmu_init();
+	/*RAMPS*/
+	// disable MMU
+	#if MOTHERBOARD != BOARD_RAMPS_14_EFB
+		mmu_init();
+	#endif
 
 	ultralcd_init();
 
-	spi_init();
+	/*RAMPS*/
+	// disable SPI 
+	#if MOTHERBOARD != BOARD_RAMPS_14_EFB
+		spi_init();
+	#endif
 
 	lcd_splash();
     Sound_Init();                                // also guarantee "SET_OUTPUT(BEEPER)"
@@ -4926,7 +4949,7 @@ if(eSoundMode!=e_SOUND_MODE_SILENT)
 		bool magnet_elimination = (eeprom_read_byte((uint8_t*)EEPROM_MBL_MAGNET_ELIMINATION) > 0);
 		
 #ifndef PINDA_THERMISTOR
-		if (run == false && temp_cal_active == true && calibration_status_pinda() == true && target_temperature_bed >= 50)
+    if (run == false && temp_cal_active == true && calibration_status_pinda() == true && target_temperature_bed >= 50)
 		{
 			temp_compensation_start();
 			run = true;
@@ -7654,6 +7677,10 @@ Sigma_Exit:
       if (code_seen('S')) temp=code_value();
       if (code_seen('C')) c=code_value();
       PID_autotune(temp, e, c);
+      /*RAMPS*/
+	    //turn off heatbed and hotend
+      enquecommand_P(PSTR("M104 S0"));
+      enquecommand_P(PSTR("M140 S0"));
     }
     break;
     

@@ -2346,5 +2346,3 @@ bool has_temperature_compensation()
 #endif
 }
 #endif //PINDA_THERMISTOR
-
-

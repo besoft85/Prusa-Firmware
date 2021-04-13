@@ -421,10 +421,10 @@ your extruder heater takes 2 minutes to hit the target on heating.
 // #define EXTRUDER_OFFSET_Y {0.0, 5.00}  // (in mm) for each extruder, offset of the hotend on the Y axis
 
 // The speed change that does not require acceleration (i.e. the software might assume it can be done instantaneously)
-#define DEFAULT_XJERK                10       // (mm/sec)
-#define DEFAULT_YJERK                10       // (mm/sec)
-#define DEFAULT_ZJERK                 0.4     // (mm/sec)
-#define DEFAULT_EJERK                 4.5     // (mm/sec)
+#define DEFAULT_XJERK                10      // (mm/sec)
+#define DEFAULT_YJERK                10      // (mm/sec)
+#define DEFAULT_ZJERK                0.4     // (mm/sec)
+#define DEFAULT_EJERK                4.5     // (mm/sec)
 
 //===========================================================================
 //=============================Additional Features===========================
@@ -445,10 +445,19 @@ your extruder heater takes 2 minutes to hit the target on heating.
 // M501 - reads parameters from EEPROM (if you need reset them after you changed them temporarily).
 // M502 - reverts to the default "factory settings".  You still need to store them in EEPROM afterwards if you want to.
 //define this to enable EEPROM support
-//#define EEPROM_SETTINGS
-//to disable EEPROM Serial responses and decrease program space by ~1700 byte: comment this out:
-// please keep turned on if you can.
-//#define EEPROM_CHITCHAT
+/*RAMPS*/
+#if (MOTHERBOARD == BOARD_RAMPS_14_EFB)
+  #define EEPROM_SETTINGS
+  //to disable EEPROM Serial responses and decrease program space by ~1700 byte: comment this out:
+  // please keep turned on if you can.
+  #define EEPROM_CHITCHAT
+#else
+  //#define EEPROM_SETTINGS
+  //to disable EEPROM Serial responses and decrease program space by ~1700 byte: comment this out:
+  // please keep turned on if you can.
+  //#define EEPROM_CHITCHAT
+  #endif
+/*RAMPS*/
 
 // Host Keepalive
 //
@@ -469,7 +478,9 @@ your extruder heater takes 2 minutes to hit the target on heating.
 
 // The RepRapDiscount Smart Controller (white PCB)
 // http://reprap.org/wiki/RepRapDiscount_Smart_Controller
-#define REPRAP_DISCOUNT_SMART_CONTROLLER
+/*RAMPS*/
+// Controller is set in Configuration_prusa.h :)
+//#define REPRAP_DISCOUNT_SMART_CONTROLLER
 #define SDSUPPORT
 #define LCD_WIDTH 20
 #define LCD_HEIGHT 4
@@ -486,8 +497,11 @@ your extruder heater takes 2 minutes to hit the target on heating.
 // Use software PWM to drive the fan, as for the heaters. This uses a very low frequency
 // which is not ass annoying as with the hardware PWM. On the other hand, if this frequency
 // is too low, you should also increment SOFT_PWM_SCALE.
-#define FAN_SOFT_PWM
-#define FAN_SOFT_PWM_BITS 4 //PWM bit resolution = 4bits, freq = 62.5Hz
+#if (MOTHERBOARD != BOARD_RAMPS_14_EFB)
+  #define FAN_SOFT_PWM
+  #define FAN_SOFT_PWM_BITS 4 //PWM bit resolution = 4bits, freq = 62.5Hz
+#endif
+/*RAMPS*/
 
 // Bed soft pwm
 #define HEATER_BED_SOFT_PWM_BITS 5 //PWM bit resolution = 5bits, freq = 31.25Hz
@@ -522,7 +536,9 @@ your extruder heater takes 2 minutes to hit the target on heating.
 //
 //#define NUM_SERVOS 3 // Servo index starts with 0 for M280 command
 
-#define DEFAULT_NOMINAL_FILAMENT_DIA  1.75  //Enter the diameter (in mm) of the filament generally used (3.0 mm or 1.75 mm). Used by the volumetric extrusion.
+/*RAMPS*/ 
+// Filament diameter is set in Configuration_prusa.h
+//#define DEFAULT_NOMINAL_FILAMENT_DIA  1.75  //Enter the diameter (in mm) of the filament generally used (3.0 mm or 1.75 mm). Used by the volumetric extrusion.
 
 // Calibration status of the machine, to be stored into the EEPROM,
 // (unsigned char*)EEPROM_CALIBRATION_STATUS

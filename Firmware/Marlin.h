@@ -499,7 +499,11 @@ bool gcode_M45(bool onlyZ, int8_t verbosity_level);
 void gcode_M114();
 void gcode_M701();
 
-#define UVLO !(PINE & (1<<4))
+/*RAMPS*/
+#ifdef UVLO_ENABLE
+	//this is pin D19 on Ramps board (ZMAX)
+	#define UVLO !(PINE & (1<<4))
+#endif
 
 void proc_commands();
 

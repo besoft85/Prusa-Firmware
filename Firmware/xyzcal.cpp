@@ -608,6 +608,20 @@ const int16_t xyzcal_point_xcoords[4] PROGMEM = {1200, 22000, 22000, 1200};
 const int16_t xyzcal_point_ycoords[4] PROGMEM = {700, 700, 19800, 19800};
 #endif //((MOTHERBOARD == BOARD_RAMBO_MINI_1_0) || (MOTHERBOARD == BOARD_RAMBO_MINI_1_3))
 
+/*RAMPS*/
+// set x,y coordinates to fit your bed
+#if MOTHERBOARD == BOARD_RAMPS_14_EFB
+  #ifdef STEPS100
+    const int16_t xyzcal_point_xcoords[4] PROGMEM = { 1150, 21450, 21450, 1150 };
+    const int16_t xyzcal_point_ycoords[4] PROGMEM = { 600, 600, 19750, 19750 };
+  #else
+    const int16_t xyzcal_point_xcoords[4] PROGMEM = { 1150 * CUSTOM_X_STEPS / 100, 21450 * CUSTOM_X_STEPS / 100, 21450 * CUSTOM_X_STEPS / 100, 1150 * CUSTOM_X_STEPS / 100};
+    const int16_t xyzcal_point_ycoords[4] PROGMEM = { 600 * CUSTOM_Y_STEPS / 100, 600 * CUSTOM_Y_STEPS / 100, 19750 * CUSTOM_Y_STEPS / 100, 19750 * CUSTOM_Y_STEPS / 100};
+  #endif // STEPS100
+//const int16_t xyzcal_point_xcoords[4] PROGMEM = { bed_ref_points_4[0], bed_ref_points_4[2], bed_ref_points_4[4], bed_ref_points_4[6]};
+//const int16_t xyzcal_point_ycoords[4] PROGMEM = { bed_ref_points_4[1], bed_ref_points_4[3], bed_ref_points_4[5], bed_ref_points_4[6]}; 
+#endif //MOTHERBOARD == BOARD_RAMPS_14_EFB
+
 const uint16_t xyzcal_point_pattern[12] PROGMEM = {0x000, 0x0f0, 0x1f8, 0x3fc, 0x7fe, 0x7fe, 0x7fe, 0x7fe, 0x3fc, 0x1f8, 0x0f0, 0x000};
 
 bool xyzcal_searchZ(void)

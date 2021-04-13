@@ -76,6 +76,22 @@ const float bed_skew_angle_extreme = (0.25f * M_PI / 180.f);
  * MK25 and MK3: front left, front right, rear right, rear left
  */
 const float bed_ref_points_4[] PROGMEM = {
+/*RAMPS*/
+#if MOTHERBOARD == BOARD_RAMPS_14_EFB
+	// Set your values
+	//MK42 BED //if XYZ calibration fails, check serial output in Proterface and adjust the values accordingly!
+	36.5f - BED_PRINT_ZERO_REF_X - X_PROBE_OFFSET_FROM_EXTRUDER - SHEET_PRINT_ZERO_REF_X,	//36,5 - 2 - 23 - 0 = 11,5
+	16.1f - BED_PRINT_ZERO_REF_Y - Y_PROBE_OFFSET_FROM_EXTRUDER - SHEET_PRINT_ZERO_REF_Y,	//16,1 - 9,4 - 5 - 0 = 1,7
+
+	239.5f - BED_PRINT_ZERO_REF_X - X_PROBE_OFFSET_FROM_EXTRUDER - SHEET_PRINT_ZERO_REF_X,	//239,5 - 2 - 23 - 0 = 214,5
+	16.1f - BED_PRINT_ZERO_REF_Y - Y_PROBE_OFFSET_FROM_EXTRUDER - SHEET_PRINT_ZERO_REF_Y,	//16,1 - 9,4 - 5 - 0 = 1,7
+
+	239.5f - BED_PRINT_ZERO_REF_X - X_PROBE_OFFSET_FROM_EXTRUDER - SHEET_PRINT_ZERO_REF_X, //239,5 - 2 - 23 - 0 = 214,5
+	212.4f - BED_PRINT_ZERO_REF_Y - Y_PROBE_OFFSET_FROM_EXTRUDER - SHEET_PRINT_ZERO_REF_Y, //212,4 - 9,4 - 5 - 0 = 198
+
+	36.5f - BED_PRINT_ZERO_REF_X - X_PROBE_OFFSET_FROM_EXTRUDER - SHEET_PRINT_ZERO_REF_X,	//36,5 - 2 - 23 - 0 = 11,5
+	212.4f - BED_PRINT_ZERO_REF_Y - Y_PROBE_OFFSET_FROM_EXTRUDER - SHEET_PRINT_ZERO_REF_Y	//212,4 - 9,4 - 5 - 0 = 198
+#else
 	37.f - BED_PRINT_ZERO_REF_X - X_PROBE_OFFSET_FROM_EXTRUDER - SHEET_PRINT_ZERO_REF_X,
 	18.4f - BED_PRINT_ZERO_REF_Y - Y_PROBE_OFFSET_FROM_EXTRUDER - SHEET_PRINT_ZERO_REF_Y,
 
@@ -87,6 +103,7 @@ const float bed_ref_points_4[] PROGMEM = {
 
 	37.f - BED_PRINT_ZERO_REF_X - X_PROBE_OFFSET_FROM_EXTRUDER  - SHEET_PRINT_ZERO_REF_X,
 	210.4f - BED_PRINT_ZERO_REF_Y - Y_PROBE_OFFSET_FROM_EXTRUDER - SHEET_PRINT_ZERO_REF_Y
+#endif
 };
 
 #else
@@ -2770,12 +2787,14 @@ canceled:
 
 bool sample_z() {
 	bool sampled = true;
-	//make space
-	current_position[Z_AXIS] += 150;
-	go_to_current(homing_feedrate[Z_AXIS] / 60);
-	//plan_buffer_line_curposXYZE(feedrate, active_extruder););
-
-	lcd_show_fullscreen_message_and_wait_P(_T(MSG_PLACE_STEEL_SHEET));
+	/*RAMPS*/
+	#ifdef STEEL_SHEET
+        //make space
+	    current_position[Z_AXIS] += 150;
+	    go_to_current(homing_feedrate[Z_AXIS] / 60);
+	    //plan_buffer_line_curposXYZE(feedrate, active_extruder););
+		lcd_show_fullscreen_message_and_wait_P(_T(MSG_PLACE_STEEL_SHEET));
+	#endif // STEEL_SHEET
 
 	// Sample Z heights for the mesh bed leveling.
 	// In addition, store the results into an eeprom, to be used later for verification of the bed leveling process.

@@ -155,6 +155,9 @@ vector_3 plan_get_position();
 /// The performance penalty is negligible, since these planned lines are usually maintenance moves with the extruder.
 void plan_buffer_line_curposXYZE(float feed_rate);
 
+//???
+void plan_buffer_line_curposXYZE(float feed_rate, uint8_t extruder);
+
 void plan_buffer_line_destinationXYZE(float feed_rate);
 
 void plan_set_position_curposXYZE();

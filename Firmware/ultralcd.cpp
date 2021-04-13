@@ -5800,10 +5800,13 @@ static void lcd_settings_menu()
 #if defined (TMC2130) && defined (LINEARITY_CORRECTION)
     MENU_ITEM_SUBMENU_P(_i("Lin. correction"), lcd_settings_linearity_correction_menu);
 #endif //LINEARITY_CORRECTION && TMC2130
+
+#ifdef PINDA_THERMISTOR
     if(has_temperature_compensation())
     {
 	    MENU_ITEM_TOGGLE_P(_T(MSG_TEMP_CALIBRATION), eeprom_read_byte((unsigned char *)EEPROM_TEMP_CAL_ACTIVE) ? _T(MSG_ON) : _T(MSG_OFF), lcd_temp_calibration_set);
     }
+#endif PINDA_THERMISTOR
 
 #ifdef HAS_SECOND_SERIAL_PORT
     MENU_ITEM_TOGGLE_P(_T(MSG_RPI_PORT), (selectedSerialPort == 0) ? _T(MSG_OFF) : _T(MSG_ON), lcd_second_serial_set);
@@ -5907,10 +5910,12 @@ static void lcd_calibration_menu()
 	//MENU_ITEM_FUNCTION_P(MSG_RESET_CALIBRATE_E, lcd_extr_cal_reset);
 #endif
 #ifndef MK1BP
+#ifdef PINDA_THERMISTOR
     if(has_temperature_compensation())
     {
 	    MENU_ITEM_SUBMENU_P(_i("Temp. calibration"), lcd_pinda_calibration_menu);////MSG_CALIBRATION_PINDA_MENU c=17 r=1
     }
+#endif PINDA_THERMISTOR   
 #endif //MK1BP
   }
   
