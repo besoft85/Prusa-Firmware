@@ -116,6 +116,10 @@ float current_temperature_pinda = 0.0;
 int current_temperature_raw_ambient = 0;
 float current_temperature_ambient = 0.0;
 #endif //AMBIENT_THERMISTOR
+#ifndef AMBIENT_THERMISTOR
+int current_temperature_raw_ambient = 0;
+float current_temperature_ambient = 0.0;
+#endif //AMBIENT_THERMISTOR
 
 #ifdef VOLT_PWR_PIN
 int current_voltage_raw_pwr = 0;
@@ -1878,6 +1882,8 @@ void adc_callback()
     fsensor.voltUpdate(adc_values[ADC_PIN_IDX(VOLT_IR_PIN)]);
 #endif //defined(FILAMENT_SENSOR) && (FILAMENT_SENSOR_TYPE == FSENSOR_IR_ANALOG)
     adc_values_ready = true;
+
+    //lcd_printf_P(PSTR("%3d"), current_temperature_raw[0]);
 }
 
 static void setCurrentTemperaturesFromIsr()
@@ -1953,7 +1959,7 @@ static void check_temp_runaway()
 static void check_temp_raw();
 
 static void temp_mgr_isr()
-{
+{//puts_P(PSTR("temp_mgr_isr"));
     // update *_isr temperatures from raw values for PID regulation
     setIsrTemperaturesFromRawValues();
 
@@ -2180,7 +2186,12 @@ static void check()
     uint8_t heater_pwm = soft_pwm[0];
     uint8_t fan_pwm = soft_pwm_fan;
     float heater_temp = current_temperature_isr[0];
+    #ifdef AMBIENT_THERMISTOR
     float ambient_temp = current_temperature_ambient_isr;
+    #endif
+    #ifndef AMBIENT_THERMISTOR
+    float ambient_temp = 0.0;
+    #endif
 
     // check if a reset is required to seed the model: this needs to be done with valid
     // ADC values, so we can't do that directly in init()
@@ -2277,7 +2288,12 @@ static void log_isr()
     log_buf.entry.delta_ms = delta_ms;
     log_buf.entry.cur_pwm = soft_pwm[0];
     log_buf.entry.cur_temp = current_temperature_isr[0];
+    #ifdef AMBIENT_THERMISTOR
     log_buf.entry.cur_amb = current_temperature_ambient_isr;
+    #endif
+    #ifndef AMBIENT_THERMISTOR
+    log_buf.entry.cur_amb = 0.0;
+    #endif
 }
 #endif
 

@@ -20,7 +20,11 @@ void timer0_init(void)
 	// Due to invert mode (following rows) the duty is set to 255, which means zero all the time (bed not heating)
 	OCR0B = 255;
 	// Set fast PWM mode and inverting mode.
+	#if (MOTHERBOARD == BOARD_RAMPS_14_EFB || MOTHERBOARD == BOARD_MKS_GEN_L_21)
+	TCCR0A = (1 << WGM01) | (1 << WGM00);
+	#else
 	TCCR0A = (1 << WGM01) | (1 << WGM00) | (1 << COM0B1) | (1 << COM0B0);  
+	#endif
 	TCCR0B = (1 << CS01);    // CLK/8 prescaling
 	TIMSK0 |= (1 << TOIE0);  // enable timer overflow interrupt
 

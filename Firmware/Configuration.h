@@ -41,7 +41,7 @@ extern const char _sPrinterMmuName[] PROGMEM;
 #ifndef CMAKE_CONTROL
 #define FW_COMMIT_HASH_LENGTH 1
 #define FW_COMMIT_HASH "0"
-#define FW_REPOSITORY "Unknown"
+#define FW_REPOSITORY "besoft85"
 #ifndef FW_VERSION_FULL
 #define FW_VERSION_FULL FW_VERSION
 #endif //END FW_VERSION_FULL
@@ -461,8 +461,9 @@ your extruder heater takes 2 minutes to hit the target on heating.
 #define REPRAP_DISCOUNT_SMART_CONTROLLER
 #define SDSUPPORT
 #define LCD_WIDTH 20
-#define LCD_HEIGHT 4
-
+/*RAPMS*/
+//#define LCD_HEIGHT 4
+/*RAPMS*/
 
 // Increase the FAN pwm frequency. Removes the PWM noise but increases heating in the FET/Arduino
 //#define FAST_PWM_FAN

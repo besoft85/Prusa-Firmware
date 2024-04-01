@@ -169,7 +169,7 @@ private:
 #define LCD_CLICKED (lcd_click_trigger)
 
 ////////////////////////////////////
-
+#ifndef DOGLCD
 //Custom characters defined in the first 8 characters of the LCD
 #define LCD_STR_BEDTEMP      "\x00"
 #define LCD_STR_DEGREE       "\x01"
@@ -183,6 +183,7 @@ private:
 #define LCD_STR_CONFIRM      "\x07"
 #define LCD_STR_ARROW_RIGHT  "\x7E" //from the default character set
 #define LCD_STR_SOLID_BLOCK  "\xFF"  //from the default character set
+#endif
 
 extern void lcd_set_custom_characters(void);
 extern void lcd_set_custom_characters_nextpage(void);

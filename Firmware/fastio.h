@@ -4048,4 +4048,89 @@ pins
 #error pins for this chip not defined in arduino.h! If you write an appropriate pin definition and have this firmware work on your chip, please submit a pull request
 #endif
 
+/*RAMPS*/
+#define WITHIN(V,L,H) ((V) >= (L) && (V) <= (H))
+
+// Remove compiler warning on an unused variable
+#define UNUSED(x) (void) (x)
+#define PIN_EXISTS(PN) (defined(PN ##_PIN) && PN ##_PIN >= 0)
+#define PENDING(NOW,SOON) ((long)(NOW-(SOON))<0)
+#define ELAPSED(NOW,SOON) (!PENDING(NOW,SOON))
+// Macros to contrain values
+#define NOLESS(v,n) do{ if (v < n) v = n; }while(0)
+
+#define _SET_OUTPUT2(IO)       SBI(DIO ## IO ## _DDR, DIO ## IO ## _PIN)
+#define SET_OUTPUT2(IO)        _SET_OUTPUT2(IO)
+
+#define _WRITE_NC2(IO,V) do{ \
+  if (V) SBI(DIO ## IO ## _WPORT, DIO ## IO ## _PIN); \
+  else   CBI(DIO ## IO ## _WPORT, DIO ## IO ## _PIN); \
+}while(0)
+
+#define _WRITE_C2(IO,V) do{ \
+  uint8_t port_bits = DIO ## IO ## _WPORT;                  /* Get a mask from the current port bits */ \
+  if (V) port_bits = ~port_bits;                            /* For setting bits, invert the mask */ \
+  DIO ## IO ## _RPORT = port_bits & _BV(DIO ## IO ## _PIN); /* Atomically toggle the output port bits */ \
+}while(0)
+
+#define _WRITE2(IO,V)          do{ if (&(DIO ## IO ## _RPORT) < (uint8_t*)0x100) _WRITE_NC2(IO,V); else _WRITE_C2(IO,V); }while(0)
+#define WRITE2(IO,V)           _WRITE2(IO,V)
+#define OUT_WRITE(IO,V)       do{ SET_OUTPUT2(IO); WRITE2(IO,V); }while(0)
+
+/*MARLIN_DELAY_H*/
+#define XYZ   3
+#define XYZE  4
+#define ABC   3
+#define ABCD  4
+#define ABCE  4
+#define ABCDE 5
+
+#define A(CODE) " " CODE "\n\t"
+#define L(CODE) CODE ":\n\t"
+
+#define nop() __asm__ __volatile__("nop;\n\t":::)
+
+FORCE_INLINE static void __delay_4cycles(uint8_t cy) {
+  __asm__ __volatile__(
+    L("1")
+    A("dec %[cnt]")
+    A("nop")
+    A("brne 1b")
+    : [cnt] "+r"(cy)  // output: +r means input+output
+    :                 // input:
+    : "cc"            // clobbers:
+  );
+}
+
+/* ---------------- Delay in cycles */
+FORCE_INLINE static void DELAY_CYCLES(uint16_t x) {
+
+  if (__builtin_constant_p(x)) {
+    #define MAXNOPS 4
+
+    if (x <= (MAXNOPS)) {
+      switch (x) { case 4: nop(); case 3: nop(); case 2: nop(); case 1: nop(); }
+    }
+    else {
+      const uint32_t rem = (x) % (MAXNOPS);
+      switch (rem) { case 3: nop(); case 2: nop(); case 1: nop(); }
+      if ((x = (x) / (MAXNOPS)))
+        __delay_4cycles(x); // if need more then 4 nop loop is more optimal
+    }
+
+    #undef MAXNOPS
+  }
+  else
+    __delay_4cycles(x / 4);
+}
+#undef nop
+
+/* ---------------- Delay in nanoseconds */
+#define DELAY_NS(x) DELAY_CYCLES( (x) * (F_CPU/1000000L) / 1000L )
+
+/* ---------------- Delay in microseconds */
+#define DELAY_US(x) DELAY_CYCLES( (x) * (F_CPU/1000000L) )
+
+/*RAMPS*/
+
 #endif /* _FASTIO_ARDUINO_H */

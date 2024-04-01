@@ -27,7 +27,13 @@ void adc_init()
 
 static void adc_reset()
 {
+    //puts_P(PSTR("adc_reset"));
+    /*RAMPS*/
+    #if (MOTHERBOARD == BOARD_RAMPS_14_EFB || MOTHERBOARD == BOARD_MKS_GEN_L_21)
+    static const uint8_t first_channel_idx = 13;
+    #else
     static const uint8_t first_channel_idx = 0;
+    #endif
     static_assert((1 << first_channel_idx) & ADC_CHAN_MSK);
 
     ADCSRA &= ~(1 << ADSC); //stop conversion just in case
@@ -47,6 +53,7 @@ static void adc_setmux(uint8_t ch)
 }
 
 void adc_start_cycle() {
+    //puts_P(PSTR("adc_start_cycle"));
 	adc_reset();
 	ADCSRA |= (1 << ADSC); //start conversion
 }

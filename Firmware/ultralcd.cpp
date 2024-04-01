@@ -316,8 +316,9 @@ static void menu_item_sdfile(const char* str_fn, char* str_fnl)
 
 // Print temperature (nozzle/bed) (9 chars total)
 void lcdui_print_temp(char type, int val_current, int val_target)
-{
+{	/*RAMPS*/
 	int chars = lcd_printf_P(_N("%c%3d/%d%c"), type, val_current, val_target, LCD_STR_DEGREE[0]);
+	/*RAMPS*/
 	lcd_space(9 - chars);
 }
 
@@ -508,26 +509,26 @@ void lcdui_print_status_line(void) {
         if (heating_status_counter > 13) {
             heating_status_counter = 0;
         }
-        lcd_set_cursor(7, 3);
+        lcd_set_cursor(7, (LCD_HEIGHT - 1));
         lcd_space(13);
 
         for (uint8_t dots = 0; dots < heating_status_counter; dots++) {
-            lcd_putc_at(7 + dots, 3, '.');
+            lcd_putc_at(7 + dots, (LCD_HEIGHT - 1), '.');
         }
         switch (heating_status) {
         case HeatingStatus::EXTRUDER_HEATING:
-            lcd_puts_at_P(0, 3, _T(MSG_HEATING));
+            lcd_puts_at_P(0, (LCD_HEIGHT - 1), _T(MSG_HEATING));
             break;
         case HeatingStatus::EXTRUDER_HEATING_COMPLETE:
-            lcd_puts_at_P(0, 3, _T(MSG_HEATING_COMPLETE));
+            lcd_puts_at_P(0, (LCD_HEIGHT - 1), _T(MSG_HEATING_COMPLETE));
             heating_status = HeatingStatus::NO_HEATING;
             heating_status_counter = 0;
             break;
         case HeatingStatus::BED_HEATING:
-            lcd_puts_at_P(0, 3, _T(MSG_BED_HEATING));
+            lcd_puts_at_P(0, (LCD_HEIGHT - 1), _T(MSG_BED_HEATING));
             break;
         case HeatingStatus::BED_HEATING_COMPLETE:
-            lcd_puts_at_P(0, 3, _T(MSG_BED_DONE));
+            lcd_puts_at_P(0, (LCD_HEIGHT - 1), _T(MSG_BED_DONE));
             heating_status = HeatingStatus::NO_HEATING;
             heating_status_counter = 0;
             break;
@@ -563,16 +564,16 @@ void lcdui_print_status_line(void) {
         case CustomMsg::FilamentLoading: // If loading filament, print status
         case CustomMsg::MMUProgress: // MMU Progress Codes
         {
-            lcd_set_cursor(lcd_status_message_idx, 3);
+            lcd_set_cursor(lcd_status_message_idx, (LCD_HEIGHT - 1));
             const uint8_t padding = lcd_print_pad(&lcd_status_message[lcd_status_message_idx], LCD_WIDTH - lcd_status_message_idx);
             lcd_status_message_idx = LCD_WIDTH - padding;
         }
         break;
         case CustomMsg::MeshBedLeveling: // If mesh bed leveling in progress, show the status
             if (custom_message_state > 10) {
-                lcd_set_cursor(0, 3);
+                lcd_set_cursor(0, (LCD_HEIGHT - 1));
                 lcd_space(LCD_WIDTH);
-                lcd_puts_at_P(0, 3, _T(MSG_CALIBRATE_Z_AUTO));
+                lcd_puts_at_P(0, (LCD_HEIGHT - 1), _T(MSG_CALIBRATE_Z_AUTO));
                 lcd_puts_P(PSTR(" : "));
                 lcd_print(custom_message_state - 10);
             } else {
@@ -581,9 +582,9 @@ void lcdui_print_status_line(void) {
                     custom_message_type = CustomMsg::Status;
                 }
                 if (custom_message_state > 3 && custom_message_state <= 10) {
-                    lcd_set_cursor(0, 3);
+                    lcd_set_cursor(0, (LCD_HEIGHT - 1));
                     lcd_space(19);
-                    lcd_puts_at_P(0, 3, _i("Calibration done")); ////MSG_HOMEYZ_DONE c=20
+                    lcd_puts_at_P(0, (LCD_HEIGHT - 1), _i("Calibration done")); ////MSG_HOMEYZ_DONE c=20
                     custom_message_state--;
                 }
             }
@@ -591,16 +592,16 @@ void lcdui_print_status_line(void) {
         case CustomMsg::PidCal: // PID tuning in progress
             lcd_print_pad(lcd_status_message, LCD_WIDTH);
             if (pid_cycle <= pid_number_of_cycles && custom_message_state > 0) {
-                lcd_set_cursor(10, 3);
+                lcd_set_cursor(10, (LCD_HEIGHT - 1));
                 lcd_printf_P(PSTR("%3d/%-3d"), pid_cycle, pid_number_of_cycles);
             }
             break;
         case CustomMsg::TempCal: // PINDA temp calibration in progress
-            lcd_set_cursor(0, 3);
+            lcd_set_cursor(0, (LCD_HEIGHT - 1));
             lcd_printf_P(PSTR("%-12.12S%-d/6"), _T(MSG_PINDA_CALIBRATION), custom_message_state);
             break;
         case CustomMsg::TempCompPreheat:              // temp compensation preheat
-            lcd_puts_at_P(0, 3, _i("PINDA Heating")); ////MSG_PINDA_PREHEAT c=20
+            lcd_puts_at_P(0, (LCD_HEIGHT - 1), _i("PINDA Heating")); ////MSG_PINDA_PREHEAT c=20
             if (custom_message_state <= PINDA_HEAT_T) {
                 lcd_puts_P(PSTR(": "));
                 lcd_print(custom_message_state); // seconds
@@ -608,7 +609,7 @@ void lcdui_print_status_line(void) {
             }
             break;
         case CustomMsg::Resuming: // Resuming
-            lcd_puts_at_P(0, 3, _T(MSG_RESUMING_PRINT));
+            lcd_puts_at_P(0, (LCD_HEIGHT - 1), _T(MSG_RESUMING_PRINT));
             break;
         }
     }
@@ -658,6 +659,34 @@ void lcdui_print_status_screen(void)
 #endif // PLANNER_DIAGNOSTICS
 
 	lcd_set_cursor(0, 2); //line 2
+/*RAMPS*/
+#if (LCD_HEIGHT == 8)
+	
+	if(fanSpeed > 0) {
+		lcd_printf_P(_N("FAN %3d"), (int16_t)(fanSpeed / 2.54));
+	}
+	else {
+		lcd_puts_P(_N("FAN ---"));	
+	}
+
+	lcd_space(5);
+
+	if(newFanSpeed > 0) {
+		lcd_printf_P(_N("LF  %3d"), (int16_t)(newFanSpeed / 2.54));
+	}
+	else {
+		lcd_puts_P(_N("LF  ---"));	
+	}
+	
+	lcd_set_cursor(0, 3); //line 3
+
+	//Print cmd queue diagnostics (8chars)
+	//lcdui_print_cmd_diag(3);
+	
+
+	lcd_set_cursor(0, 6); //line 6
+#endif
+/*RAMPS*/
 
 	//Print SD status (7 chars)
 	lcdui_print_percent_done();
@@ -680,7 +709,13 @@ void lcdui_print_status_screen(void)
 	lcdui_print_time();
 #endif //CMD_DIAGNOSTICS
 
+/*RAMPS*/
+#if (LCD_HEIGHT == 8)
+	lcd_set_cursor(0, 7); //line 7
+#else
     lcd_set_cursor(0, 3); //line 3
+#endif
+/*RAMPS*/
 
 #ifndef DEBUG_DISABLE_LCD_STATUS_LINE
 	lcdui_print_status_line();
@@ -1039,6 +1074,31 @@ static void lcd_cooldown()
   lcd_return_to_status();
 }
 
+/*RAMPS*/
+static void lcd_cooldown_fast()
+{
+  setTargetHotend(0);
+  setTargetBed(0);
+  fanSpeed = 255;
+  while (degHotend(0)>EXTRUDER_AUTO_FAN_TEMPERATURE) {
+	lcd_display_message_fullscreen_P(_i("Waiting for nozzle and bed cooling"));////MSG_WAITING_TEMP c=20 r=4
+
+    lcd_putc_at(0, 4, LCD_STR_THERMOMETER[0]);
+    lcd_printf_P(PSTR("%3d/0"), (int16_t)degHotend(0));
+    lcd_putc(LCD_STR_DEGREE[0]);
+
+    lcd_putc_at(9, 4, LCD_STR_BEDTEMP[0]);
+    lcd_printf_P(PSTR("%3d/0"), (int16_t)degBed());
+    lcd_putc(LCD_STR_DEGREE[0]);
+    delay_keep_alive(1000);
+    serialecho_temperatures();
+  }
+  fanSpeed = 0;
+  lcd_update_enable(true);
+  lcd_return_to_status();
+}
+/*RAMPS*/
+
 //! @brief append text label with a colon and format it into a fixed size output buffer
 //! It would have been much easier if there was a ':' in the labels.
 //! But since the texts like Bed, Nozzle and PINDA are used in other places
@@ -1342,7 +1402,9 @@ static void lcd_menu_temperatures_line(const char *ipgmLabel, int value){
     static const size_t maxChars = 15;
     char tmp[maxChars];
     pgmtext_with_colon(ipgmLabel, tmp, maxChars);
-    lcd_printf_P(PSTR(" %s%3d\x01 \n"), tmp, value); // no need to add -14.14 to string alignment
+	/*RAMPS*/
+	lcd_printf_P(PSTR(" %s%3d%c \n"), tmp, value, LCD_STR_DEGREE[0]); // no need to add -14.14 to string alignment
+	/*RAMPS*/
 }
 
 //! @brief Show Temperatures
@@ -1948,7 +2010,7 @@ void mFilamentItem(uint16_t nTemp, uint16_t nTempBed)
             lcd_draw_update = 1;
 
             lcd_clear();
-            lcd_puts_at_P(0, 3, _T(MSG_CANCEL));
+            lcd_puts_at_P(0, (LCD_HEIGHT - 1), _T(MSG_CANCEL));
 
             lcd_set_cursor(0, 1);
             switch (eFilamentAction)
@@ -2070,6 +2132,14 @@ static void mFilamentItem_PVB()
     mFilamentItem(PVB_PREHEAT_HOTEND_TEMP, PVB_PREHEAT_HPB_TEMP);
 }
 
+/*RAMPS*/
+static void mFilamentItem_PETC()
+{
+    bFilamentPreheatState = false;
+    mFilamentItem(PET_C_PREHEAT_HOTEND_TEMP, PET_C_PREHEAT_HPB_TEMP);
+}
+/*RAMPS*/
+
 void lcd_generic_preheat_menu()
 {
     MENU_BEGIN();
@@ -2090,6 +2160,9 @@ void lcd_generic_preheat_menu()
         bool bPreheatOnlyNozzle = shouldPreheatOnlyNozzle();
         MENU_ITEM_SUBMENU_P(bPreheatOnlyNozzle ? PSTR("PLA  -  " STRINGIFY(PLA_PREHEAT_HOTEND_TEMP)) : PSTR("PLA  -  " STRINGIFY(PLA_PREHEAT_HOTEND_TEMP)  "/" STRINGIFY(PLA_PREHEAT_HPB_TEMP)) , mFilamentItem_PLA);
         MENU_ITEM_SUBMENU_P(bPreheatOnlyNozzle ? PSTR("PET  -  " STRINGIFY(PET_PREHEAT_HOTEND_TEMP)) : PSTR("PET  -  " STRINGIFY(PET_PREHEAT_HOTEND_TEMP)  "/" STRINGIFY(PET_PREHEAT_HPB_TEMP)) , mFilamentItem_PET);
+        /*RAMPS*/
+		MENU_ITEM_SUBMENU_P(bPreheatOnlyNozzle ? PSTR("PETC -  " STRINGIFY(PET_C_PREHEAT_HOTEND_TEMP)): PSTR("PETC -  " STRINGIFY(PET_C_PREHEAT_HOTEND_TEMP) "/" STRINGIFY(PET_C_PREHEAT_HPB_TEMP)),mFilamentItem_PETC);
+        /*RAMPS*/
         MENU_ITEM_SUBMENU_P(bPreheatOnlyNozzle ? PSTR("ASA  -  " STRINGIFY(ASA_PREHEAT_HOTEND_TEMP)) : PSTR("ASA  -  " STRINGIFY(ASA_PREHEAT_HOTEND_TEMP)  "/" STRINGIFY(ASA_PREHEAT_HPB_TEMP)) , mFilamentItem_ASA);
         MENU_ITEM_SUBMENU_P(bPreheatOnlyNozzle ? PSTR("PC   -  " STRINGIFY(PC_PREHEAT_HOTEND_TEMP))  : PSTR("PC   -  " STRINGIFY(PC_PREHEAT_HOTEND_TEMP)   "/" STRINGIFY(PC_PREHEAT_HPB_TEMP))  , mFilamentItem_PC);
         MENU_ITEM_SUBMENU_P(bPreheatOnlyNozzle ? PSTR("PVB  -  " STRINGIFY(PVB_PREHEAT_HOTEND_TEMP)) : PSTR("PVB  -  " STRINGIFY(PVB_PREHEAT_HOTEND_TEMP)  "/" STRINGIFY(PVB_PREHEAT_HPB_TEMP)) , mFilamentItem_PVB);
@@ -2100,6 +2173,7 @@ void lcd_generic_preheat_menu()
         MENU_ITEM_SUBMENU_P(bPreheatOnlyNozzle ? PSTR("FLEX -  " STRINGIFY(FLEX_PREHEAT_HOTEND_TEMP)): PSTR("FLEX -  " STRINGIFY(FLEX_PREHEAT_HOTEND_TEMP) "/" STRINGIFY(FLEX_PREHEAT_HPB_TEMP)), mFilamentItem_FLEX);
     }
     if (!eeprom_read_byte((uint8_t*)EEPROM_WIZARD_ACTIVE) && eFilamentAction == FilamentAction::Preheat) MENU_ITEM_FUNCTION_P(_T(MSG_COOLDOWN), lcd_cooldown);
+	if (!eeprom_read_byte((uint8_t*)EEPROM_WIZARD_ACTIVE) && eFilamentAction == FilamentAction::Preheat) MENU_ITEM_FUNCTION_P(_T(MSG_COOLDOWN_FAST), lcd_cooldown_fast);
     MENU_END();
 }
 
@@ -2134,7 +2208,7 @@ void lcd_change_success() {
 static void lcd_loading_progress_bar(uint16_t loading_time_ms) {
 
 	for (uint_least8_t i = 0; i < LCD_WIDTH; i++) {
-		lcd_putc_at(i, 3, '.');
+		lcd_putc_at(i, (LCD_HEIGHT - 1), '.');
 		//loading_time_ms/20 delay
 		for (uint_least8_t j = 0; j < 5; j++) {
 			delay_keep_alive(loading_time_ms / 100);
@@ -2486,17 +2560,19 @@ static void lcd_menu_xyz_skew()
 	lcd_printf_P(_N(
 	  "%-14.14S:\n"
 	  "%S\n"
-	  "%-14.14S:%3.2f\x01\n"
-	  "%-14.14S:%3.2f\x01"
+	  "%-14.14S:%3.2f%c\n"
+	  "%-14.14S:%3.2f%c"
 	 ),
 	 _i("Measured skew"),  ////MSG_MEASURED_SKEW c=14
 	 STR_SEPARATOR,
 	 _i("Slight skew"), _deg(bed_skew_angle_mild),  ////MSG_SLIGHT_SKEW c=14
+     LCD_STR_DEGREE[0],
 	 _i("Severe skew"), _deg(bed_skew_angle_extreme)  ////MSG_SEVERE_SKEW c=14
+     ,LCD_STR_DEGREE[0]
 	);
 	lcd_set_cursor(15, 0);
 	if (angleDiff < 100){
-		lcd_printf_P(_N("%3.2f\x01"), _deg(angleDiff));
+		lcd_printf_P(_N("%3.2f%c"), _deg(angleDiff), LCD_STR_DEGREE[0]);
 	} else {
 		lcd_puts_P(_T(MSG_NA));
 	}
@@ -2883,7 +2959,9 @@ static const char* lcd_display_message_fullscreen_nonBlocking_P(const char *msg)
         uint8_t linelen = min(strlen_P(msg), LCD_WIDTH);
         const char *msgend2 = msg + linelen;
         msgend = msgend2;
-        if (row == 3 && linelen == LCD_WIDTH) {
+		/*RAMPS*/
+        if (row == (LCD_HEIGHT - 1) && linelen == LCD_WIDTH) {
+		/*RAMPS*/
             // Last line of the display, full line shall be displayed.
             // Find out, whether this message will be split into multiple screens.
             multi_screen = pgm_read_byte(msgend) != 0;
@@ -2915,7 +2993,9 @@ static const char* lcd_display_message_fullscreen_nonBlocking_P(const char *msg)
         // Display the "next screen" indicator character.
         lcd_set_custom_characters_nextpage();
         // Display the double down arrow.
-        lcd_putc_at(19, 3, LCD_STR_ARROW_2_DOWN[0]);
+        /*RAMPS*/
+        lcd_putc_at(19, (LCD_HEIGHT - 1), LCD_STR_ARROW_2_DOWN[0]);
+        /*RAMPS*/
     }
 
     return multi_screen ? msgend : NULL;
@@ -2948,7 +3028,7 @@ void lcd_show_fullscreen_message_and_wait_P(const char *msg)
 	for (;;) {
 		if (msg_next == NULL) {
 			// Display the confirm char.
-			lcd_putc_at(19, 3, LCD_STR_CONFIRM[0]);
+			lcd_putc_at(19, (LCD_HEIGHT - 1), LCD_STR_CONFIRM[0]);
 		}
         // Wait for 5 seconds before displaying the next text.
         for (uint8_t i = 0; i < 100; ++ i) {
@@ -3016,12 +3096,12 @@ uint8_t lcd_show_multiscreen_message_yes_no_and_wait_P(const char *msg, bool all
 //! @param third_choice text caption of third, optional, choice.
 void lcd_show_choices_prompt_P(uint8_t selected, const char *first_choice, const char *second_choice, uint8_t second_col, const char *third_choice)
 {
-    lcd_putc_at(0, 3, selected == LCD_LEFT_BUTTON_CHOICE ? '>': ' ');
+    lcd_putc_at(0, (LCD_HEIGHT - 1), selected == LCD_LEFT_BUTTON_CHOICE ? '>': ' ');
     lcd_puts_P(first_choice);
-    lcd_putc_at(second_col, 3, selected == LCD_MIDDLE_BUTTON_CHOICE ? '>': ' ');
+    lcd_putc_at(second_col, (LCD_HEIGHT - 1), selected == LCD_MIDDLE_BUTTON_CHOICE ? '>': ' ');
     lcd_puts_P(second_choice);
     if (third_choice) {
-        lcd_putc_at(18, 3, selected == LCD_RIGHT_BUTTON_CHOICE ? '>': ' ');
+        lcd_putc_at(18, (LCD_HEIGHT - 1), selected == LCD_RIGHT_BUTTON_CHOICE ? '>': ' ');
         lcd_puts_P(third_choice);
     }
 }
@@ -3685,7 +3765,7 @@ static void wait_preheat()
     while (fabs(degHotend(0) - degTargetHotend(0)) > TEMP_HYSTERESIS) {
         lcd_display_message_fullscreen_P(_T(MSG_WIZARD_HEATING));
 
-        lcd_set_cursor(0, 4);
+        lcd_set_cursor(0, (LCD_HEIGHT - 1));
 	    //Print the hotend temperature (9 chars total)
 		lcdui_print_temp(LCD_STR_THERMOMETER[0], (int)(degHotend(0) + 0.5), (int)(degTargetHotend(0) + 0.5));
         delay_keep_alive(1000);
@@ -5854,7 +5934,7 @@ void lcd_belttest()
 			Y = eeprom_read_word((uint16_t*)(EEPROM_BELTSTATUS_Y));
 			lcd_set_cursor(10, 3);
 			lcd_print(Y);
-			lcd_putc_at(19, 3, LCD_STR_UPLEVEL[0]);
+			lcd_putc_at(19, (LCD_HEIGHT - 1), LCD_STR_UPLEVEL[0]);
 			lcd_wait_for_click_delay(10);
 		}
     }

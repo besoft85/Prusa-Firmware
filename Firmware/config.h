@@ -7,6 +7,43 @@
 
 
 //ADC configuration
+/*RAMPS*/
+#if (MOTHERBOARD == BOARD_RAMPS_14_EFB || MOTHERBOARD == BOARD_MKS_GEN_L_21)
+    /*
+        DIDR0 – Digital Input Disable Register 0:
+        • Bit 7:0 – ADC7D:ADC0D: ADC7:0 Digital Input Disable
+        When this bit is written logic one, the digital input buffer on the corresponding ADC pin is disabled. The corre-
+        sponding PIN Register bit will always read as zero when this bit is set. When an analog signal is applied to the
+        ADC7:0 pin and the digital input from this pin is not needed, this bit should be written logic one to reduce power
+        consumption in the digital input buffer.
+    */
+
+    /*
+        DIDR2 – Digital Input Disable Register 2:
+        • Bit 7:0 – ADC15D:ADC8D: ADC15:8 Digital Input Disable
+        When this bit is written logic one, the digital input buffer on the corresponding ADC pin is disabled. The corre-
+        sponding PIN Register bit will always read as zero when this bit is set. When an analog signal is applied to the
+        ADC15:8 pin and the digital input from this pin is not needed, this bit should be written logic one to reduce power
+        consumption in the digital input buffer.
+    */
+
+    #ifdef PINDA_THERMISTOR
+		/* Ramps MKx with pinda thermistor */
+		#define ADC_CHAN_MSK      0b1110000000000000 //used AD channels bit mask (13 = TEMP_0_PIN, 14 = TEMP_BED_PIN, 15 = TEMP_1_PIN)
+		#define ADC_DIDR_MSK      0b1110000000000000 //AD channels DIDR mask (1 ~ disabled digital input)
+		#define ADC_CHAN_CNT      3         //number of used channels)
+		#define ADC_OVRSAMPL      16        //oversampling multiplier
+		#define ADC_CALLBACK      adc_callback //callback function ()
+	#else
+		/* Ramps MKx without pinda thermistor */
+		#define ADC_CHAN_MSK      0b0110000000000000 //used AD channels bit mask (13 = TEMP_0_PIN, 14 = TEMP_BED_PIN)
+		#define ADC_DIDR_MSK      0b0110000000000000 //AD channels DIDR mask (1 ~ disabled digital input)
+		#define ADC_CHAN_CNT      2         //number of used channels)
+		#define ADC_OVRSAMPL      16        //oversampling multiplier
+		#define ADC_CALLBACK      adc_callback //callback function ()
+	#endif // PINDA_THERMISTOR
+    
+#else
 #if defined(FILAMENT_SENSOR) && (FILAMENT_SENSOR_TYPE == FSENSOR_IR_ANALOG)
 #define ADC_CHAN_MSK      0b0000001101011111 //used AD channels bit mask (0,1,2,3,4,6,8,9)
 #define ADC_DIDR_MSK      0b0000001001011111 //AD channels DIDR mask (1 ~ disabled digital input)
@@ -18,6 +55,7 @@
 #endif
 #define ADC_OVRSAMPL      16        //oversampling multiplier
 #define ADC_CALLBACK      adc_callback //callback function ()
+#endif
 
 //SWI2C configuration
 //#define SWI2C_SDA         20 //SDA on P3
@@ -59,13 +97,21 @@
 // the language flag, without breaking existing build mechanisms.
 #ifndef CMAKE_CONTROL
 //LANG - Multi-language support
+/*RAMPS*/
+#if (MOTHERBOARD == BOARD_RAMPS_14_EFB || MOTHERBOARD == BOARD_MKS_GEN_L_21)
+#define LANG_MODE              0 // primary language only
+//#define LANG_MODE            1 // sec. language support
+#define LANG_SIZE_RESERVED     0x3000 //0x2f00 // reserved space for secondary language (10240 bytes)
+#else
 //#define LANG_MODE              0 // primary language only
 #define LANG_MODE              1 // sec. language support
-#endif
+
 
 #define LANG_SIZE_RESERVED     0x3500 // reserved space for secondary language (13568 bytes).
                                       // 0x3D00 Maximum 15616 bytes as it depends on xflash_layout.h
                                       // 16 Languages max. per group including stock 
+#endif
+#endif
 
 #if (LANG_SIZE_RESERVED % 256)
   #error "LANG_SIZE_RESERVED should be a multiple of a page size"

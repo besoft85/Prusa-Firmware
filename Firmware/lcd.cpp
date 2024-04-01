@@ -80,6 +80,12 @@ uint8_t lcd_currline;
 uint8_t lcd_escape[8];
 #endif
 
+/*RAMPS*/
+#ifdef DOGLCD
+	#include "lcd/dogm/LCD12864_ST7920.h"
+#endif
+/*RAMPS*/
+
 static void lcd_display(void);
 
 #if 0
@@ -109,6 +115,8 @@ static void lcd_pulseEnable(void)
 
 static void lcd_writebits(uint8_t value)
 {
+/*RAMPS*/
+#ifndef DOGLCD
 #ifdef LCD_8BIT
 	WRITE(LCD_PINS_D0, value & 0x01);
 	WRITE(LCD_PINS_D1, value & 0x02);
@@ -121,10 +129,13 @@ static void lcd_writebits(uint8_t value)
 	WRITE(LCD_PINS_D7, value & 0x80);
 	
 	lcd_pulseEnable();
+#endif
 }
 
 static void lcd_send(uint8_t data, uint8_t flags, uint16_t duration = LCD_DEFAULT_DELAY)
 {
+/*RAMPS*/
+#ifndef DOGLCD	
 	WRITE(LCD_PINS_RS,flags&LCD_RS_FLAG);
 	_delay_us(5);
 	lcd_writebits(data);
@@ -135,15 +146,24 @@ static void lcd_send(uint8_t data, uint8_t flags, uint16_t duration = LCD_DEFAUL
 	}
 #endif
 	delayMicroseconds(duration);
+#endif
 }
 
 static void lcd_command(uint8_t value, uint16_t duration = LCD_DEFAULT_DELAY)
 {
-	lcd_send(value, LOW, duration);
+/*RAMPS*/
+#ifndef DOGLCD
+	lcd_send(value, LOW, LCD_DEFAULT_DELAY + delayExtra);
+#endif
 }
 
 static void lcd_write(uint8_t value)
 {
+//SERIAL_ECHOLN("lcd_write(uint8_t value) call");
+/*RAMPS*/
+#ifdef DOGLCD
+	lcd_write_dogm(value);
+#else
 	if (value == '\n')
 	{
 		if (lcd_currline > 3) lcd_currline = -1;
@@ -157,12 +177,16 @@ static void lcd_write(uint8_t value)
 	}
 	#endif
 	lcd_send(value, HIGH);
+#endif
 }
 
 static void lcd_begin(uint8_t clear)
 {
 	lcd_currline = 0;
-
+/*RAMPS*/
+#ifdef DOGLCD
+	if (clear) lcd_clear();
+#else
 	lcd_send(LCD_FUNCTIONSET | LCD_8BITMODE, LOW | LCD_HALF_FLAG, 4500); // wait min 4.1ms
 	// second try
 	lcd_send(LCD_FUNCTIONSET | LCD_8BITMODE, LOW | LCD_HALF_FLAG, 150);
@@ -188,6 +212,7 @@ static void lcd_begin(uint8_t clear)
 	#ifdef VT100
 	lcd_escape[0] = 0;
 	#endif
+#endif
 }
 
 static int lcd_putchar(char c, FILE *)
@@ -197,7 +222,15 @@ static int lcd_putchar(char c, FILE *)
 }
 
 void lcd_init(void)
-{
+{//SERIAL_PROTOCOLLNPGM("lcd_init");
+/*RAMPS*/
+#ifdef DOGLCD
+	lcd_init_dogm();
+	//_delay_us(50000); 
+	lcd_begin(1); //first time init
+	fdev_setup_stream(lcdout, lcd_putchar, NULL, _FDEV_SETUP_WRITE); //setup lcdout stream
+#else
+	SERIAL_PROTOCOLLNPGM("lcd_init normal");
 	WRITE(LCD_PINS_ENABLE,LOW);
 	SET_OUTPUT(LCD_PINS_RS);
 	SET_OUTPUT(LCD_PINS_ENABLE);
@@ -220,6 +253,7 @@ void lcd_init(void)
 	_delay_us(50000); 
 	lcd_begin(1); //first time init
 	fdev_setup_stream(lcdout, lcd_putchar, NULL, _FDEV_SETUP_WRITE); //setup lcdout stream
+#endif //DOGLCD	
 }
 
 void lcd_refresh(void)
@@ -233,7 +267,8 @@ void lcd_refresh_noclear(void)
     lcd_begin(0);
     lcd_set_custom_characters();
 }
-
+/*RAMPS*/
+#ifndef DOGLCD
 void lcd_clear(void)
 {
 	lcd_command(LCD_CLEARDISPLAY, 1600);  // clear display, set cursor position to zero
@@ -252,6 +287,7 @@ void lcd_display(void)
     lcd_displaycontrol |= LCD_DISPLAYON;
     lcd_command(LCD_DISPLAYCONTROL | lcd_displaycontrol);
 }
+#endif
 
 #if 0
 void lcd_no_display(void)
@@ -345,17 +381,21 @@ static uint8_t __attribute__((noinline)) lcd_get_row_offset(uint8_t row)
 	return pgm_read_byte(row_offsets + min(row, LCD_HEIGHT - 1));
 }
 
+/*RAMPS*/
+#ifndef DOGLCD
 void lcd_set_cursor(uint8_t col, uint8_t row)
 {
 	lcd_set_current_row(row);
 	lcd_command(LCD_SETDDRAMADDR | (col + lcd_get_row_offset(lcd_currline)));
 }
-
+#endif
 void lcd_set_cursor_column(uint8_t col)
 {
 	lcd_command(LCD_SETDDRAMADDR | (col + lcd_get_row_offset(lcd_currline)));
 }
 
+/*RAMPS*/
+#ifndef DOGLCD
 // Allows us to fill the first 8 CGRAM locations
 // with custom characters
 void lcd_createChar_P(uint8_t location, const uint8_t* charmap)
@@ -365,6 +405,7 @@ void lcd_createChar_P(uint8_t location, const uint8_t* charmap)
   for (uint8_t i = 0; i < 8; i++)
     lcd_send(pgm_read_byte(&charmap[i]), HIGH);
 }
+#endif
 
 #ifdef VT100
 

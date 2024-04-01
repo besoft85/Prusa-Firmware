@@ -23,6 +23,7 @@ const char MSG_CHECKING_Y[] PROGMEM_I1 = ISTR("Checking Y axis"); ////MSG_CHECKI
 const char MSG_COMMUNITY_MADE[] PROGMEM_I1 = ISTR("Community made"); ////MSG_COMMUNITY_MADE c=18
 const char MSG_CONFIRM_NOZZLE_CLEAN[] PROGMEM_I1 = ISTR("Please clean the nozzle for calibration. Click when done."); ////MSG_CONFIRM_NOZZLE_CLEAN c=20 r=8
 const char MSG_COOLDOWN[] PROGMEM_I1 = ISTR("Cooldown"); ////MSG_COOLDOWN c=18
+const char MSG_COOLDOWN_FAST[] PROGMEM_I1 = ISTR("Fast Cooldown"); ////MSG_COOLDOWN c=14
 const char MSG_CRASH[] PROGMEM_I1 = ISTR("Crash"); ////MSG_CRASH c=7
 const char MSG_CRASH_DETECTED[] PROGMEM_I1 = ISTR("Crash detected."); ////MSG_CRASH_DETECTED c=20
 const char MSG_CRASHDETECT[] PROGMEM_I1 = ISTR("Crash det."); ////MSG_CRASHDETECT c=13

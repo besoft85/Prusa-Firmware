@@ -791,6 +791,11 @@ int uart_putchar(char c, FILE *)
 void lcd_splash()
 {
 	lcd_clear(); // clears display and homes screen
+    /*RAMPS*/
+    #if (LCD_HEIGHT == 8)
+    lcd_set_cursor(0, 2);
+    #endif
+    /*RAMPS*/
 	lcd_printf_P(PSTR("\n Original Prusa i3\n   Prusa Research\n%20.20S"), PSTR(FW_VERSION));
 }
 
@@ -7364,6 +7369,11 @@ Sigma_Exit:
       if (code_seen('S')) temp = code_value();
       if (code_seen('C')) c = code_value_short();
       PID_autotune(temp, e, c);
+      /*RAMPS*/
+	    // turn off heatbed and hotend
+      enquecommand_P(PSTR("M104 S0"));
+      enquecommand_P(PSTR("M140 S0"));
+      /*RAMPS*/
     }
     break;
 

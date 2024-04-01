@@ -41,8 +41,15 @@ void timer4_set_fan0(uint8_t duty)
 	if (duty == 0 || duty == 255)
 	{
 		// We use digital logic if the duty cycle is 0% or 100%
+		/*RAMPS*/
+		#if 0 && (MOTHERBOARD == BOARD_RAMPS_14_EFB || MOTHERBOARD == BOARD_MKS_GEN_L_21)
+		TCCR4A &= ~(1 << COM4B1);
+		OCR4B = 0;
+		#else
 		TCCR4A &= ~(1 << COM4C1);
 		OCR4C = 0;
+		#endif
+		/*RAMPS*/
 		WRITE(EXTRUDER_0_AUTO_FAN_PIN, duty);
 	}
 	else
@@ -52,8 +59,15 @@ void timer4_set_fan0(uint8_t duty)
 		// Better be safe than sorry.
 		CRITICAL_SECTION_START;
 		// Enable the PWM output on the fan pin.
+		/*RAMPS*/
+		#if 0 && (MOTHERBOARD == BOARD_RAMPS_14_EFB || MOTHERBOARD == BOARD_MKS_GEN_L_21)
+		TCCR4A |= (1 << COM4B1);
+		OCR4B = (((uint32_t)duty) * ((uint32_t)((TIMSK4 & (1 << OCIE4A))?OCR4A:255))) / ((uint32_t)255);
+		#else
 		TCCR4A |= (1 << COM4C1);
 		OCR4C = (((uint32_t)duty) * ((uint32_t)((TIMSK4 & (1 << OCIE4A))?OCR4A:255))) / ((uint32_t)255);
+		#endif
+		/*RAMPS*/
 		CRITICAL_SECTION_END;
 	}
 }
@@ -88,7 +102,13 @@ void tone4(_UNUSED uint8_t _pin, uint16_t frequency)
 	TCCR4B = (TCCR4B & 0b11111000) | prescalarbits;
 #ifdef EXTRUDER_0_AUTO_FAN_PIN
 	// Scale the fan PWM duty cycle so that it remains constant, but at the tone frequency
+	/*RAMPS*/
+	#if 0 && (MOTHERBOARD == BOARD_RAMPS_14_EFB || MOTHERBOARD == BOARD_MKS_GEN_L_21)
+	OCR4B = (((uint32_t)OCR4B) * ocr) / (uint32_t)((TIMSK4 & (1 << OCIE4A))?OCR4A:255);
+	#else
 	OCR4C = (((uint32_t)OCR4C) * ocr) / (uint32_t)((TIMSK4 & (1 << OCIE4A))?OCR4A:255);
+	#endif
+	/*RAMPS*/
 #endif //EXTRUDER_0_AUTO_FAN_PIN
 	// Set calcualted ocr
 	OCR4A = ocr;
@@ -104,7 +124,13 @@ void noTone4(_UNUSED uint8_t _pin)
 	TCCR4B = (TCCR4B & 0b11111000) | (1 << CS42) | (1 << CS40);
 #ifdef EXTRUDER_0_AUTO_FAN_PIN
 	// Scale the fan OCR back to the original value.
+	/*RAMPS*/
+	#if 0 && (MOTHERBOARD == BOARD_RAMPS_14_EFB || MOTHERBOARD == BOARD_MKS_GEN_L_21)
+	OCR4B = (((uint32_t)OCR4B) * (uint32_t)255) / (uint32_t)((TIMSK4 & (1 << OCIE4A))?OCR4A:255);
+	#else
 	OCR4C = (((uint32_t)OCR4C) * (uint32_t)255) / (uint32_t)((TIMSK4 & (1 << OCIE4A))?OCR4A:255);
+	#endif
+	/*RAMPS*/
 #endif //EXTRUDER_0_AUTO_FAN_PIN
 	OCR4A = 255;
 	// Disable Output compare A interrupt and timer overflow interrupt

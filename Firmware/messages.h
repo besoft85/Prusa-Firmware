@@ -29,6 +29,7 @@ extern const char MSG_CHECKING_Y[];
 extern const char MSG_COMMUNITY_MADE[];
 extern const char MSG_CONFIRM_NOZZLE_CLEAN[];
 extern const char MSG_COOLDOWN[];
+extern const char MSG_COOLDOWN_FAST[];
 extern const char MSG_CRASH[];
 extern const char MSG_CRASH_DETECTED[];
 extern const char MSG_CRASHDETECT[];

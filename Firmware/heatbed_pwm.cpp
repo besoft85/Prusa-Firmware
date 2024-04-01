@@ -1,6 +1,10 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
+#include "Configuration_var.h"
+#include "pins.h"
+#include "fastio.h"
+
 // All this is about silencing the heat bed, as it behaves like a loudspeaker.
 // Basically, we want the PWM heating switched at 30Hz (or so) which is a well ballanced
 // frequency for both power supply units (i.e. both PSUs are reasonably silent).
@@ -126,11 +130,25 @@ ISR(TIMER0_OVF_vect)          // timer compare interrupt service routine
 		break;
 	case States::RISE:
 		OCR0B = (fastMax - fastCounter) << fastShift;
+		/*RAMPS*/
+		#if (MOTHERBOARD == BOARD_RAMPS_14_EFB || MOTHERBOARD == BOARD_MKS_GEN_L_21)
+		#if defined(HEATER_BED_PIN) && (HEATER_BED_PIN > -1)
+		WRITE(HEATER_BED_PIN, (fastMax - fastCounter) << fastShift);
+		#endif
+		#endif
+		/*RAMPS*/
 		if( fastCounter ){
 			--fastCounter;
 		} else { // end of RISE cycles, changing into state ONE
 			state = States::RISE_TO_ONE;
 			OCR0B = 255;          // full duty
+			/*RAMPS*/
+			#if (MOTHERBOARD == BOARD_RAMPS_14_EFB || MOTHERBOARD == BOARD_MKS_GEN_L_21)
+			#if defined(HEATER_BED_PIN) && (HEATER_BED_PIN > -1)
+			WRITE(HEATER_BED_PIN, 255);
+			#endif
+			#endif
+			/*RAMPS*/
 			TCNT0 = 254;          // make the timer overflow in the next cycle
 			// @@TODO these constants are still subject to investigation
 		}
@@ -138,11 +156,25 @@ ISR(TIMER0_OVF_vect)          // timer compare interrupt service routine
 	case States::RISE_TO_ONE:
 		state = States::ONE;
 		OCR0B = 255;              // full duty
+		/*RAMPS*/
+		#if (MOTHERBOARD == BOARD_RAMPS_14_EFB || MOTHERBOARD == BOARD_MKS_GEN_L_21)
+		#if defined(HEATER_BED_PIN) && (HEATER_BED_PIN > -1)
+		WRITE(HEATER_BED_PIN, 255);
+		#endif
+		#endif
+		/*RAMPS*/
 		TCNT0 = 255;              // make the timer overflow in the next cycle
 		TCCR0B = (1 << CS01);     // change prescaler to 8, i.e. 7.8kHz
 		break;
 	case States::ONE:             // state ONE - we'll either stay in ONE or change to FALL
 		OCR0B = 255;
+		/*RAMPS*/
+		#if (MOTHERBOARD == BOARD_RAMPS_14_EFB || MOTHERBOARD == BOARD_MKS_GEN_L_21)
+		#if defined(HEATER_BED_PIN) && (HEATER_BED_PIN > -1)
+		WRITE(HEATER_BED_PIN, 255);
+		#endif
+		#endif
+		/*RAMPS*/
 		if (bedPWMDisabled) return; // stay in the ON state and do not change the output pin
 		slowCounter += slowInc;   // this does software timer_clk/256 or less
 		if( slowCounter < pwm ){
@@ -163,6 +195,13 @@ ISR(TIMER0_OVF_vect)          // timer compare interrupt service routine
 		break;
 	case States::FALL:
 		OCR0B = (fastMax - fastCounter) << fastShift; // this is the same as in RISE, because now we are setting the zero part of duty due to inverting mode
+		/*RAMPS*/
+		#if (MOTHERBOARD == BOARD_RAMPS_14_EFB || MOTHERBOARD == BOARD_MKS_GEN_L_21)
+		#if defined(HEATER_BED_PIN) && (HEATER_BED_PIN > -1)
+		WRITE(HEATER_BED_PIN, (fastMax - fastCounter) << fastShift);
+		#endif
+		#endif
+		/*RAMPS*/
 		//TCCR0A |= (1 << COM0B0); // already set in ONE_TO_FALL
 		if( fastCounter ){
 			--fastCounter;
@@ -170,12 +209,25 @@ ISR(TIMER0_OVF_vect)          // timer compare interrupt service routine
 			state = States::FALL_TO_ZERO;
 			TCNT0 = 128; //@@TODO again - need to wait long enough to propagate the timer state changes
 			OCR0B = 255;
+			/*RAMPS*/
+			#if (MOTHERBOARD == BOARD_RAMPS_14_EFB || MOTHERBOARD == BOARD_MKS_GEN_L_21)
+			#if defined(HEATER_BED_PIN) && (HEATER_BED_PIN > -1)
+			WRITE(HEATER_BED_PIN, 0);
+			#endif
+			#endif
 		}
 		break;
 	case States::FALL_TO_ZERO:
 		state = States::ZERO_START; // go to read new soft_pwm_bed value for the next cycle
 		TCNT0 = 128;
 		OCR0B = 255;
+		/*RAMPS*/
+		#if (MOTHERBOARD == BOARD_RAMPS_14_EFB || MOTHERBOARD == BOARD_MKS_GEN_L_21)
+		#if defined(HEATER_BED_PIN) && (HEATER_BED_PIN > -1)
+		WRITE(HEATER_BED_PIN, 0);
+		#endif
+		#endif
+		/*RAMPS*/
 		TCCR0B = (1 << CS01); // change prescaler to 8, i.e. 7.8kHz
 		break;		
     }
