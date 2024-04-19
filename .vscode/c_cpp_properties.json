@@ -1,0 +1,46 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
+{
+    "configurations": [
+        {
+            "name": "PlatformIO",
+            "includePath": [
+                "c:/Users/erodriguezmartinez/Desktop/Noema_DOC/Da buttare/costruire-una-stampante-3d/3d parts/_git_prusa/Prusa-Firmware_v3.13.3/Firmware",
+                "C:/Users/erodriguezmartinez/.platformio/packages/framework-arduino-avr-prusa_rambo/cores/prusa_rambo",
+                "C:/Users/erodriguezmartinez/.platformio/packages/framework-arduino-avr-prusa_rambo/variants/prusa_einsy_rambo",
+                "c:/Users/erodriguezmartinez/Desktop/Noema_DOC/Da buttare/costruire-una-stampante-3d/3d parts/_git_prusa/Prusa-Firmware_v3.13.3/lib/Catch2/src",
+                ""
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "c:/Users/erodriguezmartinez/Desktop/Noema_DOC/Da buttare/costruire-una-stampante-3d/3d parts/_git_prusa/Prusa-Firmware_v3.13.3/Firmware",
+                    "C:/Users/erodriguezmartinez/.platformio/packages/framework-arduino-avr-prusa_rambo/cores/prusa_rambo",
+                    "C:/Users/erodriguezmartinez/.platformio/packages/framework-arduino-avr-prusa_rambo/variants/prusa_einsy_rambo",
+                    "c:/Users/erodriguezmartinez/Desktop/Noema_DOC/Da buttare/costruire-una-stampante-3d/3d parts/_git_prusa/Prusa-Firmware_v3.13.3/lib/Catch2/src",
+                    ""
+                ]
+            },
+            "defines": [
+                "PLATFORMIO=60114",
+                "ARDUINO_AVR_RAMBO",
+                "F_CPU=16000000L",
+                "ARDUINO_ARCH_AVR",
+                "ARDUINO=10808",
+                "__AVR_ATmega2560__",
+                ""
+            ],
+            "cStandard": "gnu11",
+            "cppStandard": "c++17",
+            "compilerPath": "C:/Users/erodriguezmartinez/.platformio/packages/toolchain-atmelavr/bin/avr-gcc.exe",
+            "compilerArgs": [
+                "-mmcu=atmega2560",
+                ""
+            ]
+        }
+    ],
+    "version": 4
+}
