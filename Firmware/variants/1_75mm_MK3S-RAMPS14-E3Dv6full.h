@@ -23,13 +23,13 @@
 //
 // GADGETS3D G3D LCD/SD Controller
 // http://reprap.org/wiki/RAMPS_1.3/1.4_GADGETS3D_Shield_with_Panel
-#define G3D_PANEL
+//#define G3D_PANEL
 
 //
 // RepRapDiscount FULL GRAPHIC Smart Controller
 // http://reprap.org/wiki/RepRapDiscount_Full_Graphic_Smart_Controller
 //
-#define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
+//#define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
 	
 #ifdef REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
 	#define DOGLCD
@@ -78,6 +78,8 @@
 
 	//declared into Configuration.h
 	#define LCD_HEIGHT 8 //4 or 8
+#else
+	#define LCD_HEIGHT 4 //4 or 8
 #endif
 
 
@@ -89,7 +91,7 @@
 #define CUSTOM_MENDEL_NAME "Prusa i3 MK3S"
 
 // Electronics
-#define MOTHERBOARD BOARD_MKS_GEN_L_21
+#define MOTHERBOARD BOARD_RAMPS_14_EFB
 #define STEEL_SHEET
 #define HAS_SECOND_SERIAL_PORT
 
@@ -354,10 +356,10 @@
 */
 
 //RSENSE = 0.11 ohm
-#define TMC2130_CURRENTS_H 		{8, 10, 17, 20} //{16, 20, 35, 30}  	// default holding currents for all axes
-#define TMC2130_CURRENTS_FARM 	18 //36			// E 805 mA peak for ECool/farm mode
-#define TMC2130_CURRENTS_R 		{8, 10, 17, 20} //{16, 20, 35, 30}  	// default running currents for all axes
-#define TMC2130_CURRENTS_R_HOME {8, 10, 15, 12}  	// homing running currents for all axes
+#define TMC2130_CURRENTS_H 		{10, 12, 17, 22} 	//{16, 20, 35, 30}  	// default holding currents for all axes
+#define TMC2130_CURRENTS_FARM 	18 //36				// E 805 mA peak for ECool/farm mode
+#define TMC2130_CURRENTS_R 		{10, 12, 17, 22} 	//{16, 20, 35, 30}  	// default running currents for all axes
+#define TMC2130_CURRENTS_R_HOME { 8, 10, 15, 12}  	// homing running currents for all axes
 
 #define TMC2130_STEALTH_Z
 #define TMC2130_DEDGE_STEPPING
@@ -422,10 +424,10 @@
 //#define  DEFAULT_Kd 56.23 // Original Prusa
 
 //M303 E0 S240 C12
-//M301 P36.51 I3.59 D92.93
-#define DEFAULT_Kp 36.51
-#define DEFAULT_Ki 3.59
-#define DEFAULT_Kd 92.93
+//M301 P20.37 I1.45 D71.51
+#define DEFAULT_Kp 20.37
+#define DEFAULT_Ki 1.45
+#define DEFAULT_Kd 71.51
 
 //M301 P33.50 I3.16 D88.81
 
@@ -435,9 +437,9 @@
 #define EXTRUDE_MINTEMP 175
 
 // Extruder cooling fans
-#define EXTRUDER_0_AUTO_FAN_PIN   7 //PH4 OCB4 //7 = HE1 on MKS GEN 2.1
-#define EXTRUDER_AUTO_FAN_TEMPERATURE 40 //50
-#define EXTRUDER_AUTO_FAN_SPEED   255  // == full speed
+#define EXTRUDER_0_AUTO_FAN_PIN   		6 //on RAMPS pin D6 of servo motors pins //8 //8 = HEATER_BED_PIN on RAMPS
+#define EXTRUDER_AUTO_FAN_TEMPERATURE 	40 //50
+#define EXTRUDER_AUTO_FAN_SPEED   		255  // == full speed
 //#define EXTRUDER_ALTFAN_DETECT
 //#define EXTRUDER_ALTFAN_SPEED_SILENT 128
 
@@ -787,7 +789,5 @@
        calculated segment length is used. */
 #define DEFAULT_MIN_ARC_SEGMENTS 20 // The enforced minimum segments in a full circle of the same radius.  Set to 0 to disable
 #define DEFAULT_ARC_SEGMENTS_PER_SEC 0 // Use feedrate to choose segment length. Set to 0 to disable
-
-//#define HAS_STL_PREVIEW
 
 #endif //__CONFIGURATION_PRUSA_H

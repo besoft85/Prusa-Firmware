@@ -154,3 +154,15 @@
 #define FILWIDTH_CLOCK_PIN  39
 #define FILWIDTH_DATA_PIN   45
 #endif
+
+#ifdef HAS_STL_PREVIEW
+// These pins will also work for the 1.8" TFT shield
+#define TFT_CS     45
+#define TFT_RST    39  // you can also connect this to the Arduino reset
+                      // in which case, set this #define pin to 0!
+#define TFT_DC     6
+#else
+#define TFT_CS     -1
+#define TFT_RST    -1
+#define TFT_DC     -1
+#endif

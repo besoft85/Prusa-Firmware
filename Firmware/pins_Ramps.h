@@ -9,57 +9,66 @@
   #error Oops!  Make sure you have 'Arduino Mega 2560' selected from the 'Tools -> Boards' menu.
 #endif
 
+#define TMC2130
+
+#define WATCHDOG_SOFT_RESET_VALUE WDTO_15MS
+
 //#define UVLO_SUPPORT
+//#define AMBIENT_THERMISTOR
 //#define PINDA_THERMISTOR
-//#define SWI2C_SDA      20 //SDA (already defined in pins.h)
-//#define SWI2C_SCL      21 //SCL (already defined in pins.h)
+//#define SWI2C_SDA         20 //SDA (already defined in pins.h)
+//#define SWI2C_SCL         21 //SCL (already defined in pins.h)
+
+//#define PRUSA_SN_SUPPORT
+//#define XFLASH 
+//#define BOOTAPP
 
 // RAMPS pinout
 #ifdef TMC2130
-#define X_TMC2130_CS	44 //53
-#define X_TMC2130_DIAG	X_MAX_PIN //-1 // NO DIAG OUTPUTS
+#define X_TMC2130_CS	      44 //53
+#define X_TMC2130_DIAG	    X_MAX_PIN //-1 // NO DIAG OUTPUTS
 #endif
-#define X_STEP_PIN		54
-#define X_DIR_PIN		55
-#define X_ENABLE_PIN    38
+#define X_STEP_PIN		      54
+#define X_DIR_PIN		        55
+#define X_ENABLE_PIN        38
 
-#define X_MIN_PIN		3
-#define X_MAX_PIN		2
-#define X_MS1_PIN		-1
-#define X_MS2_PIN		-1
+#define X_MIN_PIN		        3
+#define X_MAX_PIN	        	2
+#define X_MS1_PIN		        -1
+#define X_MS2_PIN		        -1
 
 #ifdef TMC2130
-#define Y_TMC2130_CS	64 //49
-#define Y_TMC2130_DIAG	Y_MAX_PIN //-1 // NO DIAG OUTPUTS
+#define Y_TMC2130_CS	      64 //49
+#define Y_TMC2130_DIAG	    Y_MAX_PIN //-1 // NO DIAG OUTPUTS
 #endif
-#define Y_STEP_PIN		60
-#define Y_DIR_PIN		61
-#define Y_ENABLE_PIN    56
+#define Y_STEP_PIN		      60
+#define Y_DIR_PIN	        	61
+#define Y_ENABLE_PIN        56
 
-#define Y_MIN_PIN		14
-#define Y_MAX_PIN		15
-#define Y_MS1_PIN		-1
-#define Y_MS2_PIN		-1
+#define Y_MIN_PIN		        14
+#define Y_MAX_PIN		        15
+#define Y_MS1_PIN		        -1
+#define Y_MS2_PIN		        -1
 
 #ifdef TMC2130
-#define Z_TMC2130_CS	40
-#define Z_TMC2130_DIAG	Z_MAX_PIN //-1 // NO DIAG OUTPUTS
+#define Z_TMC2130_CS	      40
+#define Z_TMC2130_DIAG	    Z_MAX_PIN //-1 // NO DIAG OUTPUTS
 #endif
-#define Z_STEP_PIN		46
-#define Z_DIR_PIN		48
-#define Z_ENABLE_PIN    62
-#define Z_MIN_PIN		18
+#define Z_STEP_PIN		      46
+#define Z_DIR_PIN		        48
+#define Z_ENABLE_PIN        62
+#define Z_MIN_PIN		        18
 #ifdef UVLO_SUPPORT
-    #define Z_MAX_PIN	-1
+    #define Z_MAX_PIN	      -1
 #else
-    #define Z_MAX_PIN	19
+    #define Z_MAX_PIN	      19
 #endif // UVLO_SUPPORT
-#define Z_MS1_PIN		-1
-#define Z_MS2_PIN		-1
+#define Z_MS1_PIN		        -1
+#define Z_MS2_PIN		        -1
 
 #ifdef TMC2130
-#define E0_TMC2130_CS	42
-#define E0_TMC2130_DIAG	65 //Z_MIN_PROBE_PIN // -1 // NO DIAG OUTPUTS
+#define E0_TMC2130_CS	      42
+#define E0_TMC2130_DIAG	    65 //Z_MIN_PROBE_PIN // -1 // NO DIAG OUTPUTS
 #endif
 #define E0_STEP_PIN         26
 #define E0_DIR_PIN          28
@@ -67,23 +76,25 @@
 #define E0_MS1_PIN          -1
 #define E0_MS2_PIN          -1
 
-#define HEATER_BED_PIN		 8  //PH5
+#define HEATER_BED_PIN		  8  //PH5
 /*Array index for adc_samples[], not pin number */
-#define TEMP_BED_PIN		  14  //A14 (not equal to digital Y_MIN_PIN!)
+#define TEMP_BED_PIN		    14  //A14 (not equal to digital Y_MIN_PIN!)
 
-#define HEATER_0_PIN		  10  //PB4
+#define HEATER_0_PIN		    10  //PB4
 /*Array index for adc_samples[], not pin number */
-#define TEMP_0_PIN			  13 //A13 (not equal to digital LED_PIN!)
+#define TEMP_0_PIN			    13 //A13 (not equal to digital LED_PIN!)
 
 #define HEATER_1_PIN        -1
 #ifdef PINDA_THERMISTOR
-	#define TEMP_1_PIN       15 //A15 (not equal to digital Y_MAX_PIN!)
+	#define TEMP_1_PIN        15 //A15 (not equal to digital Y_MAX_PIN!)
 #else
-	#define TEMP_1_PIN      -1
+	#define TEMP_1_PIN        -1
 #endif //PINDA_THERMISTOR
 
 #define HEATER_2_PIN        -1
 #define TEMP_2_PIN          -1
+
+#define TEMP_TIM 3 //Temperature timer number //5
 
 /*test*/
 //#define TEMP_AMBIENT_PIN	-1
@@ -93,16 +104,16 @@
 //#define MOTOR_CURRENT_PWM_Z_PIN  -1
 //#define MOTOR_CURRENT_PWM_E_PIN  -1
 
-#define IR_SENSOR_PIN 		5 //IR sensor on RAMPS pin D5 of servo motors pins
+#define IR_SENSOR_PIN 		  5 //IR sensor on RAMPS pin D5 of servo motors pins
 
-#define FAN_PIN         	9
-#define LED_PIN         	13
-#define FAN_1_PIN       	-1
+#define FAN_PIN         	  9
+#define LED_PIN         	  13
+#define FAN_1_PIN       	  -1
 
 #define SDSS                53
-#define TACH_0				-1	//32	// noctua extruder fan
+#define TACH_0				      -1	//32	// noctua extruder fan
 #define KILL_PIN            41  //
-#define SUICIDE_PIN     	-1  // PIN that has to be turned on right after start, to keep power flowing.
+#define SUICIDE_PIN     	  -1  // PIN that has to be turned on right after start, to keep power flowing.
 #define PS_ON_PIN           -1	//12
 
 #define SDPOWER             -1

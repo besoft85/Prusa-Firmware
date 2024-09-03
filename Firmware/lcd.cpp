@@ -153,7 +153,7 @@ static void lcd_command(uint8_t value, uint16_t duration = LCD_DEFAULT_DELAY)
 {
 /*RAMPS*/
 #ifndef DOGLCD
-	lcd_send(value, LOW, LCD_DEFAULT_DELAY + delayExtra);
+	lcd_send(value, LOW, duration);
 #endif
 }
 
@@ -221,8 +221,36 @@ static int lcd_putchar(char c, FILE *)
 	return 0;
 }
 
+/*RAMPS*/
+#ifdef HAS_STL_PREVIEW
+#include "lcd/tft/TFT_ST7735.h"
+
+//Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS,  TFT_DC, TFT_RST);
+TFT_ST7735 tft = TFT_ST7735();
+
+void tft_init(void)
+{
+	tft.init();
+	tft.setRotation(1);
+	tft.fillScreen(ST7735_BLACK);
+
+	tft.setTextColor(ST7735_YELLOW, ST7735_BLACK);
+
+	tft.setTextColor(ST7735_GREEN, ST7735_BLACK);
+	tft.setCursor (8, 52);
+	tft.print(__DATE__); // This uses the standard ADAFruit small font
+}
+#endif
+/*RAMPS*/
+
 void lcd_init(void)
 {//SERIAL_PROTOCOLLNPGM("lcd_init");
+
+/*RAMPS*/
+#ifdef HAS_STL_PREVIEW
+	tft_init();
+#endif
+/*RAMPS*/
 /*RAMPS*/
 #ifdef DOGLCD
 	lcd_init_dogm();
