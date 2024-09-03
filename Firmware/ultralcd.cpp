@@ -663,16 +663,16 @@ void lcdui_print_status_screen(void)
 #if (LCD_HEIGHT == 8)
 	
 	if(fanSpeed > 0) {
-		lcd_printf_P(_N("FAN %3d"), (int16_t)(fanSpeed / 2.54));
+		lcd_printf_P(_N("FAN %3d%%"), (int16_t)(fanSpeed / 2.54));
 	}
 	else {
-		lcd_puts_P(_N("FAN ---"));	
+		lcd_puts_P(_N("FAN --- "));	
 	}
 
-	lcd_space(5);
+	lcd_space(4);
 
 	if(newFanSpeed > 0) {
-		lcd_printf_P(_N("LF  %3d"), (int16_t)(newFanSpeed / 2.54));
+		lcd_printf_P(_N("LF  %3d%%"), (int16_t)(newFanSpeed / 2.54));
 	}
 	else {
 		lcd_puts_P(_N("LF  ---"));	
@@ -710,11 +710,7 @@ void lcdui_print_status_screen(void)
 #endif //CMD_DIAGNOSTICS
 
 /*RAMPS*/
-#if (LCD_HEIGHT == 8)
-	lcd_set_cursor(0, 7); //line 7
-#else
-    lcd_set_cursor(0, 3); //line 3
-#endif
+lcd_set_cursor(0, LCD_HEIGHT - 1);
 /*RAMPS*/
 
 #ifndef DEBUG_DISABLE_LCD_STATUS_LINE
@@ -5047,13 +5043,17 @@ static bool fan_error_selftest()
     manage_heater();
     setExtruderAutoFanState(1); //releases lock on the hotend fan
     lcd_selftest_setfan(0);
-#ifdef TACH_0
+//RAMPS    
+#if defined(TACH_0) && (TACH_0 >-1)
+//RAMPS 
     if (fan_speed[0] <= 20) { //hotend fan error
         LCD_ALERTMESSAGERPGM(MSG_FANCHECK_HOTEND);
         return 1;
     }
 #endif
-#ifdef TACH_1
+//RAMPS 
+#if defined(TACH_1) && (TACH_1 >-1)
+//RAMPS 
     if (fan_speed[1] <= 20) { //print fan error
         LCD_ALERTMESSAGERPGM(MSG_FANCHECK_PRINT);
         return 1;
@@ -6032,7 +6032,7 @@ bool lcd_selftest()
 	KEEPALIVE_STATE(IN_HANDLER);
 
 	_progress = lcd_selftest_screen(TestScreen::ExtruderFan, _progress, 3, true, 2000);
-#if (defined(FANCHECK) && defined(TACH_0))
+#if (defined(FANCHECK) && defined(TACH_0) && (TACH_0 > -1))
 	switch (lcd_selftest_fan_auto(0)){		// check hotend fan
     case FanCheck::SwappedFan:
         _swapped_fan = true; // swapped is merely a hint (checked later)
@@ -6055,7 +6055,7 @@ bool lcd_selftest()
 	if (_result)
 	{
 		_progress = lcd_selftest_screen(TestScreen::PrintFan, _progress, 3, true, 2000);
-#if (defined(FANCHECK) && defined(TACH_1))
+#if (defined(FANCHECK) && defined(TACH_1) && (TACH_1 > -1))
         switch (lcd_selftest_fan_auto(1)){		// check print fan
         case FanCheck::SwappedFan:
             _swapped_fan = true; // swapped is merely a hint (checked later)

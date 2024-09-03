@@ -12,7 +12,11 @@
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug",
+<<<<<<< HEAD
             "executable": "C:/apps/_private/3D/Prusa Firmware/_git_prusa/Prusa-Firmware_v3.13.3/.pio/build/prusa_rambo/firmware.elf",
+=======
+            "executable": "c:/Users/erodriguezmartinez/Desktop/Noema_DOC/Da buttare/costruire-una-stampante-3d/3d parts/_git_prusa/Prusa-Firmware_v3.13.3/.pio/build/prusa_rambo/firmware.elf",
+>>>>>>> dab1beb20449b99583f6c8b45dbd5d8b3a2ee17b
             "projectEnvName": "prusa_rambo",
             "toolchainBinDir": "C:/Users/erodriguezmartinez/.platformio/packages/toolchain-atmelavr/bin",
             "internalConsoleOptions": "openOnSessionStart",
@@ -25,7 +29,11 @@
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug (skip Pre-Debug)",
+<<<<<<< HEAD
             "executable": "C:/apps/_private/3D/Prusa Firmware/_git_prusa/Prusa-Firmware_v3.13.3/.pio/build/prusa_rambo/firmware.elf",
+=======
+            "executable": "c:/Users/erodriguezmartinez/Desktop/Noema_DOC/Da buttare/costruire-una-stampante-3d/3d parts/_git_prusa/Prusa-Firmware_v3.13.3/.pio/build/prusa_rambo/firmware.elf",
+>>>>>>> dab1beb20449b99583f6c8b45dbd5d8b3a2ee17b
             "projectEnvName": "prusa_rambo",
             "toolchainBinDir": "C:/Users/erodriguezmartinez/.platformio/packages/toolchain-atmelavr/bin",
             "internalConsoleOptions": "openOnSessionStart"
@@ -34,7 +42,11 @@
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug (without uploading)",
+<<<<<<< HEAD
             "executable": "C:/apps/_private/3D/Prusa Firmware/_git_prusa/Prusa-Firmware_v3.13.3/.pio/build/prusa_rambo/firmware.elf",
+=======
+            "executable": "c:/Users/erodriguezmartinez/Desktop/Noema_DOC/Da buttare/costruire-una-stampante-3d/3d parts/_git_prusa/Prusa-Firmware_v3.13.3/.pio/build/prusa_rambo/firmware.elf",
+>>>>>>> dab1beb20449b99583f6c8b45dbd5d8b3a2ee17b
             "projectEnvName": "prusa_rambo",
             "toolchainBinDir": "C:/Users/erodriguezmartinez/.platformio/packages/toolchain-atmelavr/bin",
             "internalConsoleOptions": "openOnSessionStart",

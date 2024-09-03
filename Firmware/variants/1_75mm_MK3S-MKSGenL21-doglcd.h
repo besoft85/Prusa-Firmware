@@ -77,6 +77,7 @@
 	#define LCD_STR_SOLID_BLOCK  "\xFF"  //from the default character set
 
 	//declared into Configuration.h
+	#undef LCD_HEIGHT
 	#define LCD_HEIGHT 8 //4 or 8
 #endif
 
@@ -91,7 +92,7 @@
 // Electronics
 #define MOTHERBOARD BOARD_MKS_GEN_L_21
 #define STEEL_SHEET
-#define HAS_SECOND_SERIAL_PORT
+//#define HAS_SECOND_SERIAL_PORT
 
 // PSU
 // #define PSU_Delta                                 // uncomment if DeltaElectronics PSU installed
@@ -198,7 +199,7 @@
 //#define UVLO_SUPPORT
 
 // Fan check
-//#define FANCHECK
+#define FANCHECK
 
 // Safety timer
 #define SAFETYTIMER
@@ -354,15 +355,15 @@
 */
 
 //RSENSE = 0.11 ohm
-#define TMC2130_CURRENTS_H 		{8, 10, 17, 20} //{16, 20, 35, 30}  	// default holding currents for all axes
-#define TMC2130_CURRENTS_FARM 	18 //36			// E 805 mA peak for ECool/farm mode
-#define TMC2130_CURRENTS_R 		{8, 10, 17, 20} //{16, 20, 35, 30}  	// default running currents for all axes
-#define TMC2130_CURRENTS_R_HOME {8, 10, 15, 12}  	// homing running currents for all axes
+#define TMC2130_CURRENTS_H 		{8, 10, 17, 15} 	//{8, 10, 17, 20}  	// default holding currents for all axes
+#define TMC2130_CURRENTS_FARM 	18 //36				// E 805 mA peak for ECool/farm mode
+#define TMC2130_CURRENTS_R 		{8, 10, 17, 15} 	//{8, 10, 17, 20}  	// default running currents for all axes
+#define TMC2130_CURRENTS_R_HOME {8, 10, 15, 10}  	//{8, 10, 15, 12} // homing running currents for all axes
 
 #define TMC2130_STEALTH_Z
 #define TMC2130_DEDGE_STEPPING
 
-//#define TMC2130_SERVICE_CODES_M910_M918
+#define TMC2130_SERVICE_CODES_M910_M918
 
 //#define TMC2130_DEBUG
 //#define TMC2130_DEBUG_WR
