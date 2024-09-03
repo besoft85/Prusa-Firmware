@@ -29,3 +29,8 @@ __pycache__
 # Generated files
 /build-env/
 /Firmware/Doc/
+
+
+## BeSoft ##
+/.vscode
+/.pio
