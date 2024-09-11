@@ -199,7 +199,7 @@
 //#define UVLO_SUPPORT
 
 // Fan check
-#define FANCHECK
+//#define FANCHECK
 
 // Safety timer
 #define SAFETYTIMER
@@ -592,6 +592,7 @@
 #else
 //M303 E-1 S100 C8
 //M304 P174.74 I8.80 D867.30
+//M304 P161.24 I7.37 D881.65
 #define  DEFAULT_bedKp 126.13 	//174.74
 #define  DEFAULT_bedKi 4.30   	//8.80
 #define  DEFAULT_bedKd 924.76	//867.30

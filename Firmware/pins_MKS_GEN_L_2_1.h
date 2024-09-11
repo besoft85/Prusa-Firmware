@@ -111,9 +111,9 @@
 #define FAN_1_PIN       	  -1
 
 #define SDSS                53  //EXP2
-#define TACH_0				      32 //21  //-1	//32	// noctua extruder fan
-#define TACH0PULLUP
-#define TACH_1              -1	//39
+//#define TACH_0				      32 //21  //-1	//32	// noctua extruder fan
+//#define TACH0PULLUP
+//#define TACH_1              -1	//39
 #define KILL_PIN            41  //
 #define SUICIDE_PIN     	  -1  // PIN that has to be turned on right after start, to keep power flowing.
 #define PS_ON_PIN           -1	//12

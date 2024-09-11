@@ -449,7 +449,7 @@ void lcd_print_dogm(const char s)
 
 // Allows us to fill the first 8 CGRAM locations
 // with custom characters
-void lcd_createChar_P(uint8_t location, const uint8_t* charmap)
+void lcd_createChar_P(uint8_t location, const CustomCharacter *char_p)
 {
     //SERIAL_PROTOCOLLNPGM("lcd_createChar_P - to be implemented");
 }
